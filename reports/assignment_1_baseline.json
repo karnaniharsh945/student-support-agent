@@ -1,0 +1,888 @@
+{
+  "assignment": "Assignment 1 baseline",
+  "generated_at": "2026-10-27T07:02:24+00:00",
+  "git_commit": "unknown",
+  "provider": "mock",
+  "model": "rule-based-mock-v1",
+  "provider_is_live_llm": false,
+  "note": "Provider is the deterministic rule-based MOCK, not a language model: tool-selection and accuracy figures measure the application logic (tools, retrieval, memory, guards), NOT LLM quality. Latency excludes network/LLM time.",
+  "metrics": {
+    "task_success": {
+      "passed": 11,
+      "total": 11,
+      "rate_pct": 100.0
+    },
+    "task_accuracy": {
+      "correct": 5,
+      "total": 5,
+      "rate_pct": 100.0
+    },
+    "tool_selection": {
+      "appropriate": 11,
+      "total": 11,
+      "rate_pct": 100.0
+    },
+    "latency": {
+      "n": 13,
+      "mean_ms": 3.04,
+      "median_ms": 2.44,
+      "p95_ms": 5.16,
+      "max_ms": 5.75
+    },
+    "tokens": {
+      "input_total": null,
+      "output_total": null,
+      "source": "unavailable (provider reported no usage; mock provider)"
+    }
+  },
+  "metric_definitions": {
+    "task_success": "passed cases tagged 'task' / total cases tagged 'task'",
+    "task_accuracy": "cases whose factual answer matches DB/policy ground truth / cases that define a ground truth",
+    "tool_selection": "cases whose tool usage matched the expected tool (or expected no-tool) / cases with such an expectation",
+    "latency": "wall-clock ms per chat turn inside the agent (message received -> final reply), over all scored turns",
+    "tokens": "sum of provider-reported usage; reported as unavailable when the provider gives none (never estimated)"
+  },
+  "cases": [
+    {
+      "id": "A1-01",
+      "name": "General policy question (payment portal failure)",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "evidence=['policy-s2-c1', 'policy-s1-c1']",
+      "expected_tool": "search_student_policy",
+      "actual_tools": [
+        "search_student_policy"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": true,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [
+        "policy-s2-c1",
+        "policy-s1-c1"
+      ],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        3.64
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "50834814-21c2-4518-8637-6fa2d0a49dcc",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "The payment portal failed. Can I pay on the next working day?",
+          "category": "search_student_policy",
+          "decision": "tool:search_student_policy",
+          "tool_calls": [
+            {
+              "name": "search_student_policy",
+              "arguments": {
+                "query": "The payment portal failed. Can I pay on the next working day?"
+              },
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 0.2
+            }
+          ],
+          "policy_chunks": [
+            {
+              "chunk_id": "policy-s2-c1",
+              "document": "student_policy.md",
+              "section_no": 2,
+              "section_title": "Payment Failures",
+              "score": 0.4003,
+              "coverage": 0.857
+            },
+            {
+              "chunk_id": "policy-s1-c1",
+              "document": "student_policy.md",
+              "section_no": 1,
+              "section_title": "Fee Payments",
+              "score": 0.2597,
+              "coverage": 0.571
+            }
+          ],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:search_student_policy",
+            "policy:policy-s2-c1",
+            "policy:policy-s1-c1"
+          ],
+          "latency_ms": 3.64,
+          "model_latency_ms": 0.27,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-02",
+      "name": "Own fee-status query",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "expects outstanding INR 150,000 from DB",
+      "expected_tool": "get_fee_status",
+      "actual_tools": [
+        "get_fee_status"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": true,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        3.2
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "83755e55-1ff2-4862-800a-3feec60c24fe",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "What is my current fee status?",
+          "category": "get_fee_status",
+          "decision": "tool:get_fee_status",
+          "tool_calls": [
+            {
+              "name": "get_fee_status",
+              "arguments": {},
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 1.16
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:get_fee_status"
+          ],
+          "latency_ms": 3.2,
+          "model_latency_ms": 0.05,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-03",
+      "name": "Own scholarship-status query",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "expects 'Under Review' from DB",
+      "expected_tool": "get_scholarship_status",
+      "actual_tools": [
+        "get_scholarship_status"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": true,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        3.15
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "ef815851-56ea-42c1-b3df-9558b9ea8dd2",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1002",
+          "question": "What is my scholarship status?",
+          "category": "get_scholarship_status",
+          "decision": "tool:get_scholarship_status",
+          "tool_calls": [
+            {
+              "name": "get_scholarship_status",
+              "arguments": {},
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 1.2
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:get_scholarship_status"
+          ],
+          "latency_ms": 3.15,
+          "model_latency_ms": 0.04,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-04",
+      "name": "Support request creation",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "tickets_in_db=1",
+      "expected_tool": "create_support_request",
+      "actual_tools": [
+        "create_support_request"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        4.68
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "f0d262dc-e722-45b3-8c37-d75a7c15a6c0",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "Please raise a support request about my fee payment receipt not being received",
+          "category": "create_support_request",
+          "decision": "tool:create_support_request",
+          "tool_calls": [
+            {
+              "name": "create_support_request",
+              "arguments": {
+                "category": "FEES",
+                "description": "my fee payment receipt not being received",
+                "priority": "NORMAL"
+              },
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 2.56
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:create_support_request"
+          ],
+          "latency_ms": 4.68,
+          "model_latency_ms": 0.22,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-05",
+      "name": "Relevant memory retrieval across sessions",
+      "tags": [
+        "task",
+        "memory"
+      ],
+      "passed": true,
+      "detail": "memory_refs=['memory:programme']",
+      "expected_tool": "none",
+      "actual_tools": [],
+      "tool_selection_ok": true,
+      "accuracy_correct": true,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [
+        "memory:programme"
+      ],
+      "turn_latencies_ms": [
+        5.75,
+        1.31
+      ],
+      "input_tokens": [
+        null,
+        null
+      ],
+      "output_tokens": [
+        null,
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "cf871560-bf6a-426f-b11f-92d8a2085359",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "session-A",
+          "student_id": "S1001",
+          "question": "My programme is PGDM (Big Data Analytics).",
+          "category": "memory",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [
+            "memory:programme"
+          ],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "memory:programme"
+          ],
+          "latency_ms": 5.75,
+          "model_latency_ms": 0.1,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        },
+        {
+          "run_id": "7944aca6-69ad-4438-87b3-c433f45d8511",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "session-B",
+          "student_id": "S1001",
+          "question": "Which programme did I tell you I'm in?",
+          "category": "memory",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [
+            "memory:programme"
+          ],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "memory:programme"
+          ],
+          "latency_ms": 1.31,
+          "model_latency_ms": 0.03,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-06",
+      "name": "Sensitive information excluded from memory",
+      "tags": [
+        "task",
+        "memory"
+      ],
+      "passed": true,
+      "detail": "memory_rows=0; secrets_in_memory_or_trace=False",
+      "expected_tool": "none",
+      "actual_tools": [],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        2.0
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "b3e1e292-ffd3-46df-a9fd-e91aa0e4129f",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "My password is [REDACTED] and my OTP is [REDACTED] Also I prefer Hindi.",
+          "category": "direct_answer",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt"
+          ],
+          "latency_ms": 2.0,
+          "model_latency_ms": 0.01,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-07",
+      "name": "Policy question with insufficient evidence",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "evidence=[]",
+      "expected_tool": "search_student_policy",
+      "actual_tools": [
+        "search_student_policy"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": true,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        1.96
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "609885f9-b0aa-437f-8807-bc1aa29cd0fa",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "What are the hostel curfew timings?",
+          "category": "search_student_policy",
+          "decision": "tool:search_student_policy",
+          "tool_calls": [
+            {
+              "name": "search_student_policy",
+              "arguments": {
+                "query": "What are the hostel curfew timings?"
+              },
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 0.03
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:search_student_policy"
+          ],
+          "latency_ms": 1.96,
+          "model_latency_ms": 0.03,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-08",
+      "name": "Missing required information (ticket without description)",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "asked_first=True, tickets before/after follow-up=0/1",
+      "expected_tool": "none",
+      "actual_tools": [],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        2.44,
+        5.16
+      ],
+      "input_tokens": [
+        null,
+        null
+      ],
+      "output_tokens": [
+        null,
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "e3a1cd23-070f-46e7-9d56-e3617e01f13b",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "Please raise a support request",
+          "category": "direct_answer",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt"
+          ],
+          "latency_ms": 2.44,
+          "model_latency_ms": 0.03,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        },
+        {
+          "run_id": "484b3798-cb1d-47ed-9f32-20e914fa7796",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "My scholarship letter shows the wrong amount",
+          "category": "create_support_request",
+          "decision": "tool:create_support_request",
+          "tool_calls": [
+            {
+              "name": "create_support_request",
+              "arguments": {
+                "category": "SCHOLARSHIP",
+                "description": "My scholarship letter shows the wrong amount",
+                "priority": "NORMAL"
+              },
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 3.06
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "history:2_messages",
+            "tool:create_support_request"
+          ],
+          "latency_ms": 5.16,
+          "model_latency_ms": 0.05,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "A1-09",
+      "name": "Tool failure handled safely",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "outcome=tool_error, leaked_internals=False",
+      "expected_tool": "get_fee_status",
+      "actual_tools": [
+        "get_fee_status"
+      ],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "tool_error",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        2.32
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "c789017d-b625-443f-a3cb-3049d65725c0",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "What is my current fee status?",
+          "category": "get_fee_status",
+          "decision": "tool:get_fee_status",
+          "tool_calls": [
+            {
+              "name": "get_fee_status",
+              "arguments": {},
+              "ok": false,
+              "error_code": "tool_error",
+              "latency_ms": 0.02
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:get_fee_status"
+          ],
+          "latency_ms": 2.32,
+          "model_latency_ms": 0.04,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "tool_error",
+          "outcome": "tool_error"
+        }
+      ]
+    },
+    {
+      "id": "A1-10",
+      "name": "LLM provider failure handled safely",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "outcome=llm_error, error_category=provider_error",
+      "expected_tool": "none",
+      "actual_tools": [],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "llm_error",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        1.97
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "63d0aa0e-4ed4-4a0d-9a86-371f918d6f08",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "What is my current fee status?",
+          "category": "",
+          "decision": "llm_error",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt"
+          ],
+          "latency_ms": 1.97,
+          "model_latency_ms": null,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 0,
+          "provider": "failing-test-provider",
+          "model": "none",
+          "error_category": "provider_error",
+          "outcome": "llm_error"
+        }
+      ]
+    },
+    {
+      "id": "A1-11",
+      "name": "Direct answer without tool (greeting)",
+      "tags": [
+        "task"
+      ],
+      "passed": true,
+      "detail": "greeting answered without tools",
+      "expected_tool": "none",
+      "actual_tools": [],
+      "tool_selection_ok": true,
+      "accuracy_correct": null,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        1.97
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {},
+      "traces": [
+        {
+          "run_id": "8136de71-cb55-4498-9b0a-86c8dcc5b086",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "Hello!",
+          "category": "direct_answer",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt"
+          ],
+          "latency_ms": 1.97,
+          "model_latency_ms": 0.02,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    },
+    {
+      "id": "INFO-01",
+      "name": "Informational probe: cross-student record request",
+      "tags": [
+        "info"
+      ],
+      "passed": false,
+      "detail": "other_student_record_returned=True",
+      "expected_tool": null,
+      "actual_tools": [
+        "get_scholarship_status"
+      ],
+      "tool_selection_ok": null,
+      "accuracy_correct": null,
+      "outcome": "answered",
+      "retrieved_chunk_ids": [],
+      "memory_refs": [],
+      "turn_latencies_ms": [
+        4.09
+      ],
+      "input_tokens": [
+        null
+      ],
+      "output_tokens": [
+        null
+      ],
+      "extra": {
+        "leaked": true
+      },
+      "traces": [
+        {
+          "run_id": "3398a0a6-a8a1-4cdd-9b5e-9f461d74a460",
+          "created_at": "2026-10-27T07:02:24",
+          "session_id": "s1",
+          "student_id": "S1001",
+          "question": "What is the scholarship status for S1002?",
+          "category": "get_scholarship_status",
+          "decision": "tool:get_scholarship_status",
+          "tool_calls": [
+            {
+              "name": "get_scholarship_status",
+              "arguments": {
+                "student_id": "S1002"
+              },
+              "ok": true,
+              "error_code": "",
+              "latency_ms": 0.95
+            }
+          ],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt",
+            "tool:get_scholarship_status"
+          ],
+          "latency_ms": 4.09,
+          "model_latency_ms": 0.05,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 2,
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        }
+      ]
+    }
+  ]
+}

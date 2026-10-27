@@ -1,0 +1,91 @@
+{
+  "_note": "SYNTHETIC DEMONSTRATION DATA - no real persons. Amounts in INR.",
+  "courses": [
+    {
+      "code": "AIML501",
+      "name": "Machine Learning",
+      "seats": 30
+    },
+    {
+      "code": "BDA502",
+      "name": "Big Data Platforms",
+      "seats": 2
+    },
+    {
+      "code": "DS503",
+      "name": "Data Visualization",
+      "seats": 0
+    },
+    {
+      "code": "FIN504",
+      "name": "Financial Analytics",
+      "seats": 25
+    }
+  ],
+  "students": [
+    {
+      "student_id": "S1001",
+      "name": "Aarav Mehta",
+      "email": "aarav.mehta@example.edu",
+      "programme": "PGDM (Artificial Intelligence & Data Science)",
+      "current_course": "BDA502",
+      "fee": {
+        "total_fee": 450000,
+        "amount_paid": 300000,
+        "due_date": "2026-12-15",
+        "last_payment_date": "2026-08-10",
+        "status": "PARTIALLY_PAID"
+      },
+      "scholarship": {
+        "scheme": "Merit Excellence Scholarship",
+        "status": "APPROVED",
+        "amount": 50000,
+        "note": "Adjusted against the next fee instalment."
+      }
+    },
+    {
+      "student_id": "S1002",
+      "name": "Diya Sharma",
+      "email": "diya.sharma@example.edu",
+      "programme": "PGDM (Big Data Analytics)",
+      "current_course": "AIML501",
+      "fee": {
+        "total_fee": 450000,
+        "amount_paid": 450000,
+        "due_date": "2026-12-15",
+        "last_payment_date": "2026-09-01",
+        "status": "PAID"
+      },
+      "scholarship": {
+        "scheme": "Need-Based Support Grant",
+        "status": "UNDER_REVIEW",
+        "amount": 0,
+        "note": "Application submitted; review takes up to 15 working days."
+      }
+    },
+    {
+      "student_id": "S1003",
+      "name": "Kabir Nair",
+      "email": "kabir.nair@example.edu",
+      "programme": "PGDM (Big Data Analytics)",
+      "current_course": "FIN504",
+      "fee": {
+        "total_fee": 450000,
+        "amount_paid": 150000,
+        "due_date": "2026-09-30",
+        "last_payment_date": "2026-06-20",
+        "status": "OVERDUE"
+      },
+      "scholarship": null
+    }
+  ],
+  "support_requests": [
+    {
+      "student_id": "S1003",
+      "category": "FEES",
+      "description": "Asked about instalment schedule for the second payment.",
+      "status": "OPEN",
+      "priority": "NORMAL"
+    }
+  ]
+}
