@@ -140,7 +140,7 @@ class ApprovalService:
                               execution_status="NOT_EXECUTED", result="existing_pending_returned")
             return {**existing, "duplicate": True, "executed": False}
         if problem is not None:
-            self.audit.record("COURSE_CHANGE_REQUEST_REJECTED", ctx=ctx, target_type="student_record", target_id=owner,
+            self.audit.record("COURSE_CHANGE_REQUEST_INVALID", ctx=ctx, target_type="student_record", target_id=owner,
                               decision="ALLOWED", execution_status="NOT_EXECUTED", result="validation_failed",
                               error_category=problem[0])
             raise ApprovalError(*problem)

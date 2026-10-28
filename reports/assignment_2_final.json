@@ -1,7 +1,7 @@
 {
   "assignment": "Assignment 2 final",
-  "generated_at": "2026-10-28T07:26:12+00:00",
-  "git_commit": "74bcad5",
+  "generated_at": "2026-10-28T07:26:45+00:00",
+  "git_commit": "6ff8405",
   "provider": "mock",
   "model": "rule-based-mock-v1",
   "provider_is_live_llm": false,
@@ -24,10 +24,10 @@
     },
     "latency": {
       "n": 13,
-      "mean_ms": 4.3,
-      "median_ms": 4.83,
-      "p95_ms": 5.91,
-      "max_ms": 6.55
+      "mean_ms": 4.38,
+      "median_ms": 4.55,
+      "p95_ms": 7.13,
+      "max_ms": 7.27
     },
     "tokens": {
       "input_total": null,
@@ -79,7 +79,7 @@
       "total": 17,
       "rate_pct": 100.0
     },
-    "login_latency_ms": 4.8
+    "login_latency_ms": 5.4
   },
   "metric_definitions": {
     "task_success": "passed cases tagged 'task' / total cases tagged 'task'",
@@ -118,7 +118,7 @@
       ],
       "memory_refs": [],
       "turn_latencies_ms": [
-        3.59
+        3.58
       ],
       "input_tokens": [
         null
@@ -129,9 +129,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "06ff415c-0fc1-41ac-a5af-1f3885c85648",
-          "created_at": "2026-10-28T07:26:09",
-          "session_id": "111352b3d1a189cd",
+          "run_id": "f1bf1e6c-7210-4f8c-a76b-3ef55afe2279",
+          "created_at": "2026-10-28T07:26:42",
+          "session_id": "329be473c3335aa9",
           "student_id": "S1001",
           "question": "The payment portal failed. Can I pay on the next working day?",
           "category": "search_student_policy",
@@ -144,7 +144,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 0.15
+              "latency_ms": 0.1
             }
           ],
           "policy_chunks": [
@@ -173,8 +173,8 @@
             "policy:policy-s2-c1",
             "policy:policy-s1-c1"
           ],
-          "latency_ms": 3.59,
-          "model_latency_ms": 0.33,
+          "latency_ms": 3.58,
+          "model_latency_ms": 0.28,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -213,7 +213,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.91
+        5.99
       ],
       "input_tokens": [
         null
@@ -224,9 +224,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "b4ae902c-de6b-476e-aabd-c38485341680",
-          "created_at": "2026-10-28T07:26:09",
-          "session_id": "d6a84d392f0d95ef",
+          "run_id": "e6bc7c9a-7578-400e-bc50-8b0feecaaa50",
+          "created_at": "2026-10-28T07:26:42",
+          "session_id": "dd1bf0c317be7c1d",
           "student_id": "S1001",
           "question": "What is my current fee status?",
           "category": "get_fee_status",
@@ -237,7 +237,7 @@
               "arguments": {},
               "ok": true,
               "error_code": "",
-              "latency_ms": 3.85
+              "latency_ms": 3.9
             }
           ],
           "policy_chunks": [],
@@ -247,7 +247,7 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 5.91,
+          "latency_ms": 5.99,
           "model_latency_ms": 0.06,
           "input_tokens": null,
           "output_tokens": null,
@@ -287,7 +287,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.69
+        6.08
       ],
       "input_tokens": [
         null
@@ -298,9 +298,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "4fe1d324-8648-4e0f-9ab7-e8dfc401b794",
-          "created_at": "2026-10-28T07:26:09",
-          "session_id": "d047051ca45d64e7",
+          "run_id": "7fcb6c0c-a4e7-4353-bffc-cf2840a46ad5",
+          "created_at": "2026-10-28T07:26:42",
+          "session_id": "57b243909996c4b6",
           "student_id": "S1002",
           "question": "What is my scholarship status?",
           "category": "get_scholarship_status",
@@ -311,7 +311,7 @@
               "arguments": {},
               "ok": true,
               "error_code": "",
-              "latency_ms": 3.72
+              "latency_ms": 4.02
             }
           ],
           "policy_chunks": [],
@@ -321,7 +321,7 @@
             "system_prompt",
             "tool:get_scholarship_status"
           ],
-          "latency_ms": 5.69,
+          "latency_ms": 6.08,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -361,7 +361,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.05
+        7.27
       ],
       "input_tokens": [
         null
@@ -372,9 +372,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "7526584d-bc07-41fd-8e2e-408b40f4b919",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "d7bca0cac324dff7",
+          "run_id": "5e4f882a-8a40-4be4-af7d-0a06f55c6c18",
+          "created_at": "2026-10-28T07:26:42",
+          "session_id": "4dc52f90d318dfa4",
           "student_id": "S1001",
           "question": "Please raise a support request about my fee payment receipt not being received",
           "category": "create_support_request",
@@ -389,7 +389,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 2.97
+              "latency_ms": 4.74
             }
           ],
           "policy_chunks": [],
@@ -399,8 +399,8 @@
             "system_prompt",
             "tool:create_support_request"
           ],
-          "latency_ms": 5.05,
-          "model_latency_ms": 0.23,
+          "latency_ms": 7.27,
+          "model_latency_ms": 0.25,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -440,8 +440,8 @@
         "memory:programme"
       ],
       "turn_latencies_ms": [
-        5.74,
-        1.53
+        7.13,
+        1.52
       ],
       "input_tokens": [
         null,
@@ -454,9 +454,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "e1203016-de1b-49c5-8f05-73a6ebbf9112",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "137c2ffa7f12489f",
+          "run_id": "370f5403-b201-4cf9-a4ad-cef3e9f9711e",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "2c9aeb5121afce8c",
           "student_id": "S1001",
           "question": "My programme is PGDM (Big Data Analytics).",
           "category": "memory",
@@ -471,8 +471,8 @@
             "system_prompt",
             "memory:programme"
           ],
-          "latency_ms": 5.74,
-          "model_latency_ms": 0.1,
+          "latency_ms": 7.13,
+          "model_latency_ms": 0.15,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -487,9 +487,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "28930b7f-886f-4771-a4a9-049e7592fce1",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "ab835085bbdfe8d3",
+          "run_id": "2936857e-76f7-49f6-bf18-a46221cd0631",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "8ef249fcf2d136cb",
           "student_id": "S1001",
           "question": "Which programme did I tell you I'm in?",
           "category": "memory",
@@ -504,8 +504,8 @@
             "system_prompt",
             "memory:programme"
           ],
-          "latency_ms": 1.53,
-          "model_latency_ms": 0.03,
+          "latency_ms": 1.52,
+          "model_latency_ms": 0.04,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -538,7 +538,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        6.55
+        4.27
       ],
       "input_tokens": [
         null
@@ -549,9 +549,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "a1112a21-024f-4cee-be0a-ceb3c135f4c8",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "a4cc9ed4f421e3af",
+          "run_id": "e6461159-192f-4451-8413-b1deae0c1e7a",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "19e7e987a35cf597",
           "student_id": "S1001",
           "question": "My password is [REDACTED] and my OTP is [REDACTED] Also I prefer Hindi.",
           "category": "direct_answer",
@@ -563,7 +563,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 6.55,
+          "latency_ms": 4.27,
           "model_latency_ms": 0.02,
           "input_tokens": null,
           "output_tokens": null,
@@ -598,7 +598,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        2.61
+        2.11
       ],
       "input_tokens": [
         null
@@ -609,9 +609,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "89856742-c490-4368-ab3f-56d9333bcd12",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "1353538478513f70",
+          "run_id": "bc76b214-bfe1-478a-ab96-a520b956a785",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "01bcd6d1b2de445d",
           "student_id": "S1001",
           "question": "What are the hostel curfew timings?",
           "category": "search_student_policy",
@@ -624,7 +624,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 0.05
+              "latency_ms": 0.04
             }
           ],
           "policy_chunks": [],
@@ -634,7 +634,7 @@
             "system_prompt",
             "tool:search_student_policy"
           ],
-          "latency_ms": 2.61,
+          "latency_ms": 2.11,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -672,8 +672,8 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        1.97,
-        4.83
+        1.99,
+        4.55
       ],
       "input_tokens": [
         null,
@@ -686,9 +686,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "e1854b3d-2516-48e3-810f-94419aadee5f",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "502d9e3a2eff419f",
+          "run_id": "aa4f8dd1-b916-49cf-a381-b5da93f4e2a2",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "6c6dede4988590a2",
           "student_id": "S1001",
           "question": "Please raise a support request",
           "category": "direct_answer",
@@ -700,7 +700,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 1.97,
+          "latency_ms": 1.99,
           "model_latency_ms": 0.02,
           "input_tokens": null,
           "output_tokens": null,
@@ -716,9 +716,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "37dece3c-a45c-4780-a895-cc17ac7e7658",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "502d9e3a2eff419f",
+          "run_id": "cfd9103f-f5bd-4514-8bce-3933be90ef33",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "6c6dede4988590a2",
           "student_id": "S1001",
           "question": "My scholarship letter shows the wrong amount",
           "category": "create_support_request",
@@ -733,7 +733,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 3.23
+              "latency_ms": 2.92
             }
           ],
           "policy_chunks": [],
@@ -744,7 +744,7 @@
             "history:2_messages",
             "tool:create_support_request"
           ],
-          "latency_ms": 4.83,
+          "latency_ms": 4.55,
           "model_latency_ms": 0.04,
           "input_tokens": null,
           "output_tokens": null,
@@ -784,7 +784,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        4.7
+        5.03
       ],
       "input_tokens": [
         null
@@ -795,9 +795,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "ce06b593-cdcc-401f-8b05-429f7647c5d4",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "ed1934fb1cccdf2c",
+          "run_id": "d80bf02c-bb14-46d6-9add-c63fb2905205",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "fab60dcc9394a4ff",
           "student_id": "S1001",
           "question": "What is my current fee status?",
           "category": "get_fee_status",
@@ -808,7 +808,7 @@
               "arguments": {},
               "ok": false,
               "error_code": "tool_error",
-              "latency_ms": 2.75
+              "latency_ms": 2.97
             }
           ],
           "policy_chunks": [],
@@ -818,7 +818,7 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 4.7,
+          "latency_ms": 5.03,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -856,7 +856,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.74
+        5.37
       ],
       "input_tokens": [
         null
@@ -867,9 +867,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "99115620-136f-4cf4-acb6-81ebfa8bfed0",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "336578052ca05fdc",
+          "run_id": "b06b6f77-3f7c-44fa-8b64-085d726feb33",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "9f5512f904cf8e35",
           "student_id": "S1001",
           "question": "What is my current fee status?",
           "category": "",
@@ -881,7 +881,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 5.74,
+          "latency_ms": 5.37,
           "model_latency_ms": null,
           "input_tokens": null,
           "output_tokens": null,
@@ -914,7 +914,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        2.03
+        2.06
       ],
       "input_tokens": [
         null
@@ -925,9 +925,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "6a2a08b7-54ce-449d-ab2b-47bd3aca9985",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "db624ed7efd59c35",
+          "run_id": "8e690403-bdc2-46f2-9c73-24504993a59a",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "827144bcf0a20b77",
           "student_id": "S1001",
           "question": "Hello!",
           "category": "direct_answer",
@@ -939,8 +939,8 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 2.03,
-          "model_latency_ms": 0.03,
+          "latency_ms": 2.06,
+          "model_latency_ms": 0.02,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -974,7 +974,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.53
+        5.32
       ],
       "input_tokens": [
         null
@@ -987,9 +987,9 @@
       },
       "traces": [
         {
-          "run_id": "4cba26c1-6db3-45a8-ace8-5337570d1cdc",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "635ae9495f862f7c",
+          "run_id": "14568cb4-2ea9-46d8-9c9b-a4723cd8c2bb",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "578cc3a2b280d236",
           "student_id": "S1001",
           "question": "What is the scholarship status for S1002?",
           "category": "get_scholarship_status",
@@ -1002,7 +1002,7 @@
               },
               "ok": false,
               "error_code": "permission_denied",
-              "latency_ms": 3.64
+              "latency_ms": 3.2
             }
           ],
           "policy_chunks": [],
@@ -1012,7 +1012,7 @@
             "system_prompt",
             "tool:get_scholarship_status"
           ],
-          "latency_ms": 5.53,
+          "latency_ms": 5.32,
           "model_latency_ms": 0.06,
           "input_tokens": null,
           "output_tokens": null,
@@ -1053,7 +1053,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        6.84
+        6.6
       ],
       "input_tokens": [
         null
@@ -1069,9 +1069,9 @@
       },
       "traces": [
         {
-          "run_id": "f4f01c96-419a-409b-85bd-c6b7f3e0ed9d",
-          "created_at": "2026-10-28T07:26:10",
-          "session_id": "d682f3c1f0f72c04",
+          "run_id": "8cb77568-e165-455c-bc9f-718dceef1881",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "e5f1b96d59893c1b",
           "student_id": "S1001",
           "question": "What is my current fee status?",
           "category": "get_fee_status",
@@ -1082,7 +1082,7 @@
               "arguments": {},
               "ok": true,
               "error_code": "",
-              "latency_ms": 4.82
+              "latency_ms": 4.41
             }
           ],
           "policy_chunks": [],
@@ -1092,8 +1092,8 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 6.84,
-          "model_latency_ms": 0.06,
+          "latency_ms": 6.6,
+          "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -1133,7 +1133,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        6.06
+        6.03
       ],
       "input_tokens": [
         null
@@ -1149,9 +1149,9 @@
       },
       "traces": [
         {
-          "run_id": "9a4b9b40-98d2-45cf-ad00-3735de0129e8",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "ef4aac1e5364deae",
+          "run_id": "d01f99bd-c056-487d-b9d3-cade681c7642",
+          "created_at": "2026-10-28T07:26:43",
+          "session_id": "1ccf15552c1306c3",
           "student_id": "S1002",
           "question": "What is my scholarship status?",
           "category": "get_scholarship_status",
@@ -1162,7 +1162,7 @@
               "arguments": {},
               "ok": true,
               "error_code": "",
-              "latency_ms": 4.04
+              "latency_ms": 3.93
             }
           ],
           "policy_chunks": [],
@@ -1172,7 +1172,7 @@
             "system_prompt",
             "tool:get_scholarship_status"
           ],
-          "latency_ms": 6.06,
+          "latency_ms": 6.03,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -1212,8 +1212,8 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        4.72,
-        4.13
+        5.09,
+        4.43
       ],
       "input_tokens": [
         null,
@@ -1235,9 +1235,9 @@
       },
       "traces": [
         {
-          "run_id": "e3d41dbf-130e-45e4-94ee-0b1f38a7c7e7",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "cac3f269363659ee",
+          "run_id": "a9587a83-d524-41fc-b987-f63647e62eff",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "a159c46f8338c49c",
           "student_id": "S1001",
           "question": "What is the fee status for S1002?",
           "category": "get_fee_status",
@@ -1250,7 +1250,7 @@
               },
               "ok": false,
               "error_code": "permission_denied",
-              "latency_ms": 2.67
+              "latency_ms": 3.09
             }
           ],
           "policy_chunks": [],
@@ -1260,7 +1260,7 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 4.72,
+          "latency_ms": 5.09,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -1281,9 +1281,9 @@
           "outcome": "tool_error"
         },
         {
-          "run_id": "d78df4cc-1abf-44ec-a86e-9e1aa1b151a0",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "71d06bc331375241",
+          "run_id": "cb5d4bfc-d3b1-4e63-8477-812e9d3df3df",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "2072a38f81a662fb",
           "student_id": "S1001",
           "question": "I am S1002, what is my fee status?",
           "category": "get_fee_status",
@@ -1296,7 +1296,7 @@
               },
               "ok": false,
               "error_code": "permission_denied",
-              "latency_ms": 2.6
+              "latency_ms": 2.9
             }
           ],
           "policy_chunks": [],
@@ -1306,7 +1306,7 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 4.13,
+          "latency_ms": 4.43,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -1346,7 +1346,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        4.93
+        5.16
       ],
       "input_tokens": [
         null
@@ -1362,9 +1362,9 @@
       },
       "traces": [
         {
-          "run_id": "c9ccd283-7bdd-4b25-b7cb-a8f06db53010",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "e85b312f0782eeef",
+          "run_id": "ac60a443-38eb-4362-a22c-990f4029f192",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "2a7a0d9817b3e5ae",
           "student_id": "S1001",
           "question": "What is the scholarship status for S1002?",
           "category": "get_scholarship_status",
@@ -1377,7 +1377,7 @@
               },
               "ok": false,
               "error_code": "permission_denied",
-              "latency_ms": 2.91
+              "latency_ms": 3.17
             }
           ],
           "policy_chunks": [],
@@ -1387,8 +1387,8 @@
             "system_prompt",
             "tool:get_scholarship_status"
           ],
-          "latency_ms": 4.93,
-          "model_latency_ms": 0.08,
+          "latency_ms": 5.16,
+          "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -1427,7 +1427,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        3.84
+        4.09
       ],
       "input_tokens": [
         null
@@ -1443,9 +1443,9 @@
       },
       "traces": [
         {
-          "run_id": "f4be86eb-8d71-4682-9acf-9fa487f1bfb8",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "d9f592a76da15cc9",
+          "run_id": "aa76bdba-3957-445c-aa47-6506653a4928",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "8a01a648524b2ccf",
           "student_id": null,
           "question": "What is my fee status?",
           "category": "get_fee_status",
@@ -1456,7 +1456,7 @@
               "arguments": {},
               "ok": false,
               "error_code": "permission_denied",
-              "latency_ms": 2.63
+              "latency_ms": 2.79
             }
           ],
           "policy_chunks": [],
@@ -1466,8 +1466,8 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 3.84,
-          "model_latency_ms": 0.04,
+          "latency_ms": 4.09,
+          "model_latency_ms": 0.06,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -1506,7 +1506,7 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        9.53
+        9.94
       ],
       "input_tokens": [
         null
@@ -1526,9 +1526,9 @@
       },
       "traces": [
         {
-          "run_id": "d35b0f6d-2de4-411a-a099-9b15f789271b",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "dd642c7fe3eb2109",
+          "run_id": "5e4176ea-8a1c-426a-a9c4-464887a98750",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "871f9d91023f7fe0",
           "student_id": "S1001",
           "question": "I want to change my course to Machine Learning because I like it",
           "category": "request_course_change",
@@ -1542,7 +1542,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 7.25
+              "latency_ms": 7.45
             }
           ],
           "policy_chunks": [],
@@ -1552,8 +1552,8 @@
             "system_prompt",
             "tool:request_course_change"
           ],
-          "latency_ms": 9.53,
-          "model_latency_ms": 0.32,
+          "latency_ms": 9.94,
+          "model_latency_ms": 0.35,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -1592,9 +1592,9 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        10.54,
-        7.28,
-        1.45
+        7.43,
+        6.08,
+        1.87
       ],
       "input_tokens": [
         null,
@@ -1614,9 +1614,9 @@
       },
       "traces": [
         {
-          "run_id": "1f270e64-9800-40d2-8dcf-11b50834e7e9",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "c54e0bc3f8b9cb91",
+          "run_id": "e8bdb4a0-c50c-4d98-bd28-0608099c8b73",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "990ea2531b929ff7",
           "student_id": "S1001",
           "question": "change my course to AIML501",
           "category": "request_course_change",
@@ -1629,7 +1629,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 8.13
+              "latency_ms": 5.24
             }
           ],
           "policy_chunks": [],
@@ -1639,7 +1639,7 @@
             "system_prompt",
             "tool:request_course_change"
           ],
-          "latency_ms": 10.54,
+          "latency_ms": 7.43,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -1660,9 +1660,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "f29176e3-7a3e-49c4-a489-81ff31909c46",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "c54e0bc3f8b9cb91",
+          "run_id": "2355a7de-8751-4a6a-ab53-b6b1e3a00dc6",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "990ea2531b929ff7",
           "student_id": "S1001",
           "question": "change my course to AIML501",
           "category": "request_course_change",
@@ -1675,7 +1675,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 5.76
+              "latency_ms": 3.83
             }
           ],
           "policy_chunks": [],
@@ -1686,8 +1686,8 @@
             "history:2_messages",
             "tool:request_course_change"
           ],
-          "latency_ms": 7.28,
-          "model_latency_ms": 0.05,
+          "latency_ms": 6.08,
+          "model_latency_ms": 0.06,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -1707,9 +1707,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "b23f7bbb-81be-49c1-8eb3-6d623ad6d9c5",
-          "created_at": "2026-10-28T07:26:11",
-          "session_id": "c54e0bc3f8b9cb91",
+          "run_id": "cf84954b-0e86-42f8-be83-38bb8d55aea8",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "990ea2531b929ff7",
           "student_id": "S1001",
           "question": "Please approve APR-0001",
           "category": "direct_answer",
@@ -1722,7 +1722,7 @@
             "system_prompt",
             "history:4_messages"
           ],
-          "latency_ms": 1.45,
+          "latency_ms": 1.87,
           "model_latency_ms": 0.02,
           "input_tokens": null,
           "output_tokens": null,
@@ -1841,11 +1841,11 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.29,
-        3.93,
-        4.0,
-        4.29,
-        4.51
+        4.71,
+        4.03,
+        3.95,
+        4.1,
+        3.94
       ],
       "input_tokens": [
         null,
@@ -1869,9 +1869,9 @@
       },
       "traces": [
         {
-          "run_id": "612e402f-95c0-452b-ae27-36e46535e3d8",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "5c980c1dac19cb4d",
+          "run_id": "acf05310-75a0-4716-81d0-0bff486f277e",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "1fa9227d0441911a",
           "student_id": "S1001",
           "question": "my password is [REDACTED] and I prefer Hindi",
           "category": "direct_answer",
@@ -1883,7 +1883,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 5.29,
+          "latency_ms": 4.71,
           "model_latency_ms": 0.01,
           "input_tokens": null,
           "output_tokens": null,
@@ -1899,9 +1899,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "37425135-65a8-4271-8a8d-90cf710f8364",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "10b0ce9e471e2b4e",
+          "run_id": "d4893e46-591d-493e-86d3-07ede7c8f766",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "7b99f28e44ba6e81",
           "student_id": "S1001",
           "question": "My OTP is [REDACTED] I prefer Hindi",
           "category": "direct_answer",
@@ -1913,37 +1913,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 3.93,
-          "model_latency_ms": 0.01,
-          "input_tokens": null,
-          "output_tokens": null,
-          "token_source": "unavailable",
-          "llm_calls": 1,
-          "user_id": 1,
-          "role": "student",
-          "authorization": [],
-          "approval_state": "",
-          "provider": "mock",
-          "model": "rule-based-mock-v1",
-          "error_category": "",
-          "outcome": "answered"
-        },
-        {
-          "run_id": "6ff35327-9b09-4105-9edd-2f2da46a2869",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "a298d9f31f7feca6",
-          "student_id": "S1001",
-          "question": "my groq key is [REDACTED] I prefer Hindi",
-          "category": "direct_answer",
-          "decision": "direct_answer",
-          "tool_calls": [],
-          "policy_chunks": [],
-          "memory_refs": [],
-          "context_sources": [
-            "current_question",
-            "system_prompt"
-          ],
-          "latency_ms": 4.0,
+          "latency_ms": 4.03,
           "model_latency_ms": 0.02,
           "input_tokens": null,
           "output_tokens": null,
@@ -1959,11 +1929,11 @@
           "outcome": "answered"
         },
         {
-          "run_id": "8d76009f-3725-4e74-a8c5-436e95eb4738",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "64b663b598ae032e",
+          "run_id": "c5e5009c-3224-4928-a776-f4f15340adc7",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "d206c951168f4adb",
           "student_id": "S1001",
-          "question": "use [REDACTED] please, I prefer Hindi",
+          "question": "my groq key is [REDACTED] I prefer Hindi",
           "category": "direct_answer",
           "decision": "direct_answer",
           "tool_calls": [],
@@ -1973,7 +1943,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 4.29,
+          "latency_ms": 3.95,
           "model_latency_ms": 0.01,
           "input_tokens": null,
           "output_tokens": null,
@@ -1989,9 +1959,39 @@
           "outcome": "answered"
         },
         {
-          "run_id": "8bac1a2b-c391-4066-8d5a-aed471e78dc0",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "f81840f5443b6b57",
+          "run_id": "9db4f65b-a5d9-4c66-873a-1419b2faef71",
+          "created_at": "2026-10-28T07:26:44",
+          "session_id": "fe58fe59439e2bf4",
+          "student_id": "S1001",
+          "question": "use [REDACTED] please, I prefer Hindi",
+          "category": "direct_answer",
+          "decision": "direct_answer",
+          "tool_calls": [],
+          "policy_chunks": [],
+          "memory_refs": [],
+          "context_sources": [
+            "current_question",
+            "system_prompt"
+          ],
+          "latency_ms": 4.1,
+          "model_latency_ms": 0.01,
+          "input_tokens": null,
+          "output_tokens": null,
+          "token_source": "unavailable",
+          "llm_calls": 1,
+          "user_id": 1,
+          "role": "student",
+          "authorization": [],
+          "approval_state": "",
+          "provider": "mock",
+          "model": "rule-based-mock-v1",
+          "error_category": "",
+          "outcome": "answered"
+        },
+        {
+          "run_id": "cad802bf-8c23-4c9d-b370-d322b2eee49b",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "e7baead9a1ef2868",
           "student_id": "S1001",
           "question": "my card number is [REDACTED]. I prefer Hindi",
           "category": "direct_answer",
@@ -2003,7 +2003,7 @@
             "current_question",
             "system_prompt"
           ],
-          "latency_ms": 4.51,
+          "latency_ms": 3.94,
           "model_latency_ms": 0.01,
           "input_tokens": null,
           "output_tokens": null,
@@ -2116,11 +2116,11 @@
       "retrieved_chunk_ids": [],
       "memory_refs": [],
       "turn_latencies_ms": [
-        5.64,
-        1.67,
-        6.3,
-        4.92,
-        1.4
+        6.94,
+        1.75,
+        4.44,
+        4.67,
+        1.53
       ],
       "input_tokens": [
         null,
@@ -2139,9 +2139,9 @@
       "extra": {},
       "traces": [
         {
-          "run_id": "19b8dcc5-c743-45e3-8335-1be24496da5c",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "27d44ed91bb7bc2e",
+          "run_id": "dc8663d4-bdbe-4fe2-ab37-26c91f82b52b",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "e074f765665e0503",
           "student_id": "S1003",
           "question": "What is my current fee status?",
           "category": "get_fee_status",
@@ -2152,7 +2152,7 @@
               "arguments": {},
               "ok": true,
               "error_code": "",
-              "latency_ms": 3.57
+              "latency_ms": 4.83
             }
           ],
           "policy_chunks": [],
@@ -2162,7 +2162,7 @@
             "system_prompt",
             "tool:get_fee_status"
           ],
-          "latency_ms": 5.64,
+          "latency_ms": 6.94,
           "model_latency_ms": 0.06,
           "input_tokens": null,
           "output_tokens": null,
@@ -2183,9 +2183,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "e55a45b8-4002-45ef-9292-b951db70375c",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "27d44ed91bb7bc2e",
+          "run_id": "70bd3572-9984-4cb2-b6fc-54cf85ac9841",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "e074f765665e0503",
           "student_id": "S1003",
           "question": "What is the late fee?",
           "category": "search_student_policy",
@@ -2198,7 +2198,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 0.13
+              "latency_ms": 0.08
             }
           ],
           "policy_chunks": [
@@ -2228,8 +2228,8 @@
             "policy:policy-s3-c1",
             "policy:policy-s2-c1"
           ],
-          "latency_ms": 1.67,
-          "model_latency_ms": 0.1,
+          "latency_ms": 1.75,
+          "model_latency_ms": 0.09,
           "input_tokens": null,
           "output_tokens": null,
           "token_source": "unavailable",
@@ -2249,9 +2249,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "c4b33061-8dee-4d95-927b-8c9472161bcf",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "27d44ed91bb7bc2e",
+          "run_id": "4eacbf06-7204-417d-9849-29e9020e3809",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "e074f765665e0503",
           "student_id": "S1003",
           "question": "Please raise a support request about my overdue instalment payment arrangement",
           "category": "create_support_request",
@@ -2266,7 +2266,7 @@
               },
               "ok": true,
               "error_code": "",
-              "latency_ms": 4.69
+              "latency_ms": 2.99
             }
           ],
           "policy_chunks": [],
@@ -2277,7 +2277,7 @@
             "history:4_messages",
             "tool:create_support_request"
           ],
-          "latency_ms": 6.3,
+          "latency_ms": 4.44,
           "model_latency_ms": 0.05,
           "input_tokens": null,
           "output_tokens": null,
@@ -2298,9 +2298,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "b339c395-74e0-4cda-a910-c9e673c58369",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "72f0429ef467675a",
+          "run_id": "29468546-9ebe-4d64-8573-02c8abf083cd",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "cc0f8395571ba690",
           "student_id": "S1003",
           "question": "My programme is PGDM (Big Data Analytics).",
           "category": "memory",
@@ -2315,7 +2315,7 @@
             "system_prompt",
             "memory:programme"
           ],
-          "latency_ms": 4.92,
+          "latency_ms": 4.67,
           "model_latency_ms": 0.03,
           "input_tokens": null,
           "output_tokens": null,
@@ -2331,9 +2331,9 @@
           "outcome": "answered"
         },
         {
-          "run_id": "e2d4b288-e2d5-4d4a-b969-8ee52ee910b1",
-          "created_at": "2026-10-28T07:26:12",
-          "session_id": "f4e375111db99edf",
+          "run_id": "6ecbe404-fd31-4f64-9990-f1dfc6f2588f",
+          "created_at": "2026-10-28T07:26:45",
+          "session_id": "2f8da432e437b188",
           "student_id": "S1003",
           "question": "Which programme did I tell you I'm in?",
           "category": "memory",
@@ -2348,7 +2348,7 @@
             "system_prompt",
             "memory:programme"
           ],
-          "latency_ms": 1.4,
+          "latency_ms": 1.53,
           "model_latency_ms": 0.03,
           "input_tokens": null,
           "output_tokens": null,
@@ -2372,7 +2372,7 @@
         "security"
       ],
       "passed": true,
-      "detail": "8/8 auth checks passed (no enumeration, lockout, long password, forged token, logout revoke, session expiry, unauthenticated chat, bcrypt hashes); LOGIN_FAILED=9, LOGIN_SUCCESS=2; login latency=4.8 ms",
+      "detail": "8/8 auth checks passed (no enumeration, lockout, long password, forged token, logout revoke, session expiry, unauthenticated chat, bcrypt hashes); LOGIN_FAILED=9, LOGIN_SUCCESS=2; login latency=5.4 ms",
       "expected_tool": null,
       "actual_tools": [],
       "tool_selection_ok": null,
@@ -2388,7 +2388,7 @@
           8,
           8
         ],
-        "login_ms": 4.8
+        "login_ms": 5.4
       },
       "traces": []
     },
