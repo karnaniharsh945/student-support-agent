@@ -87,5 +87,38 @@
       "status": "OPEN",
       "priority": "NORMAL"
     }
+  ],
+  "_demo_accounts_note": "DEMO-ONLY credentials for local testing. They are hashed with bcrypt when the database is seeded; never reuse them anywhere.",
+  "users": [
+    {
+      "username": "aarav",
+      "password": "Aarav@2026",
+      "role": "student",
+      "student_id": "S1001"
+    },
+    {
+      "username": "diya",
+      "password": "Diya@2026",
+      "role": "student",
+      "student_id": "S1002"
+    },
+    {
+      "username": "kabir",
+      "password": "Kabir@2026",
+      "role": "student",
+      "student_id": "S1003"
+    },
+    {
+      "username": "approver",
+      "password": "Approver@2026",
+      "role": "approver",
+      "student_id": null
+    },
+    {
+      "username": "admin",
+      "password": "Admin@2026",
+      "role": "admin",
+      "student_id": null
+    }
   ]
 }

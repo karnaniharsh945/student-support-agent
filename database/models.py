@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from datetime import datetime
 
-from sqlalchemy import CheckConstraint, DateTime, ForeignKey, Integer, String, Text, UniqueConstraint
+from sqlalchemy import Boolean, CheckConstraint, DateTime, ForeignKey, Index, Integer, String, Text, UniqueConstraint, text
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, relationship
 
 
@@ -96,6 +96,10 @@ class Trace(Base):
     policy_chunks_json: Mapped[str] = mapped_column(Text, default="[]")
     memory_refs_json: Mapped[str] = mapped_column(Text, default="[]")
     context_sources_json: Mapped[str] = mapped_column(Text, default="[]")
+    user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    role: Mapped[str] = mapped_column(String(20), default="")
+    authorization_json: Mapped[str] = mapped_column(Text, default="[]")     # per tool call: allowed / denied
+    approval_state: Mapped[str] = mapped_column(String(30), default="")      # e.g. PENDING when a sensitive action was queued
     latency_ms: Mapped[float] = mapped_column(default=0.0)
     model_latency_ms: Mapped[float | None] = mapped_column(nullable=True)
     input_tokens: Mapped[int | None] = mapped_column(Integer, nullable=True)
@@ -106,3 +110,78 @@ class Trace(Base):
     model: Mapped[str] = mapped_column(String(80), default="")
     error_category: Mapped[str] = mapped_column(String(40), default="")
     outcome: Mapped[str] = mapped_column(String(30), default="")
+
+
+# ----------------------------------------------------------------------------- Milestone 2 tables
+class User(Base):
+    """Login identity. Kept separate from the student profile (authentication != student data)."""
+    __tablename__ = "users"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    username: Mapped[str] = mapped_column(String(50), unique=True)
+    password_hash: Mapped[str] = mapped_column(String(100))            # bcrypt; never plaintext
+    role: Mapped[str] = mapped_column(String(20))                      # student | approver | admin
+    student_id: Mapped[str | None] = mapped_column(ForeignKey("students.student_id"), unique=True, nullable=True)
+    is_active: Mapped[bool] = mapped_column(Boolean, default=True)
+    failed_attempts: Mapped[int] = mapped_column(Integer, default=0)
+    locked_until: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    __table_args__ = (CheckConstraint("role IN ('student','approver','admin')", name="ck_user_role"),)
+
+
+class AuthSession(Base):
+    """Server-side session. Only the SHA-256 of the bearer token is stored."""
+    __tablename__ = "auth_sessions"
+    token_hash: Mapped[str] = mapped_column(String(64), primary_key=True)
+    user_id: Mapped[int] = mapped_column(ForeignKey("users.id"), index=True)
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    revoked: Mapped[bool] = mapped_column(Boolean, default=False)
+
+
+class ApprovalRequest(Base):
+    """A sensitive action waiting for (or past) human approval."""
+    __tablename__ = "approval_requests"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    action_type: Mapped[str] = mapped_column(String(30))                 # COURSE_CHANGE
+    requester_user_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
+    student_id: Mapped[str] = mapped_column(ForeignKey("students.student_id"), index=True)
+    payload_json: Mapped[str] = mapped_column(Text)                      # {from_course,to_course,reason}
+    # PENDING | PROCESSING (transient claim) | EXECUTED | REJECTED | EXPIRED | STALE | FAILED
+    status: Mapped[str] = mapped_column(String(20), default="PENDING")
+    created_at: Mapped[datetime] = mapped_column(DateTime)
+    expires_at: Mapped[datetime] = mapped_column(DateTime)
+    decided_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    decided_by_user_id: Mapped[int | None] = mapped_column(ForeignKey("users.id"), nullable=True)
+    decision_note: Mapped[str] = mapped_column(String(300), default="")
+    executed_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
+    failure_category: Mapped[str] = mapped_column(String(40), default="")
+    __table_args__ = (
+        # database-level guarantee: at most ONE pending request per student per action type
+        Index("uq_one_pending_per_student_action", "student_id", "action_type", unique=True,
+              sqlite_where=text("status = 'PENDING'")),
+    )
+
+    @property
+    def display_id(self) -> str:
+        return f"APR-{self.id:04d}"
+
+
+class AuditEvent(Base):
+    """Append-only audit trail (UPDATE/DELETE are blocked by SQLite triggers; see database/initialization.py)."""
+    __tablename__ = "audit_events"
+    id: Mapped[int] = mapped_column(Integer, primary_key=True, autoincrement=True)
+    event_id: Mapped[str] = mapped_column(String(36), unique=True)
+    timestamp: Mapped[datetime] = mapped_column(DateTime, index=True)
+    actor_user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    actor_username: Mapped[str] = mapped_column(String(50), default="")
+    actor_role: Mapped[str] = mapped_column(String(20), default="")
+    action: Mapped[str] = mapped_column(String(50), index=True)
+    target_type: Mapped[str] = mapped_column(String(30), default="")
+    target_id: Mapped[str] = mapped_column(String(40), default="")
+    permission_decision: Mapped[str] = mapped_column(String(10), default="N/A")      # ALLOWED | DENIED | N/A
+    approval_request_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    approval_decision: Mapped[str] = mapped_column(String(12), default="")           # APPROVED | REJECTED | ""
+    approver_user_id: Mapped[int | None] = mapped_column(Integer, nullable=True)
+    execution_status: Mapped[str] = mapped_column(String(20), default="")            # EXECUTED | NOT_EXECUTED | FAILED | ""
+    result: Mapped[str] = mapped_column(String(40), default="")
+    error_category: Mapped[str] = mapped_column(String(40), default="")
+    detail_json: Mapped[str] = mapped_column(Text, default="{}")                     # allow-listed, redacted keys only

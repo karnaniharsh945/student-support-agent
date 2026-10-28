@@ -10,17 +10,14 @@ from services.container import Services
 
 class ScholarshipInput(BaseModel):
     student_id: str | None = Field(default=None, pattern=r"^S\d{4}$",
-                                   description="Leave empty for the signed-in student's own record.")
+                                   description="Leave empty. Only the signed-in student's own record can be read.")
 
 
 def make_tool(svc: Services) -> ToolSpec:
     def handler(ctx: RequestContext, args: ScholarshipInput) -> ToolResult:
-        target = args.student_id or ctx.student_id
-        if not target:
-            return ToolResult(False, error_code="missing_student", user_message="Which student ID should I look up?")
-        return ToolResult(True, data=svc.scholarships.get_scholarship_status(target))
+        return ToolResult(True, data=svc.scholarships.get_scholarship_status(ctx, args.student_id))
 
     return ToolSpec(
-        name="get_scholarship_status",
-        description="Get the scholarship application status of the student's own record (scheme, status, amount).",
+        name="get_scholarship_status", required_permission="scholarship:read_own",
+        description="Get the scholarship application status of the signed-in student's own record (scheme, status, amount).",
         input_model=ScholarshipInput, handler=handler)

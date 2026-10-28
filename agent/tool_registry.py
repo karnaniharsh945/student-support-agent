@@ -11,6 +11,7 @@ from typing import Any, Callable
 from pydantic import BaseModel, ValidationError
 
 from agent.state import RequestContext, ToolCallRecord, ToolResult
+from services.authorization import AuthorizationError
 from services.records import RecordNotFound
 
 
@@ -20,6 +21,7 @@ class ToolSpec:
     description: str
     input_model: type[BaseModel]
     handler: Callable[[RequestContext, BaseModel], ToolResult]
+    required_permission: str | None = None      # role permission checked by the guard BEFORE any argument is touched
 
     def openai_schema(self) -> dict[str, Any]:
         schema = self.input_model.model_json_schema()
@@ -31,8 +33,11 @@ class ToolSpec:
 
 
 class ToolRegistry:
-    def __init__(self) -> None:
+    def __init__(self, guard: Callable[[ToolSpec, RequestContext], ToolResult | None] | None = None,
+                 on_tool_error: Callable[[str, RequestContext], None] | None = None) -> None:
         self._tools: dict[str, ToolSpec] = {}
+        self._guard = guard                      # returns a denial ToolResult, or None to proceed
+        self._on_tool_error = on_tool_error
 
     def register(self, spec: ToolSpec) -> None:
         self._tools[spec.name] = spec
@@ -47,14 +52,19 @@ class ToolRegistry:
         started = time.perf_counter()
         args_for_trace = raw_args if isinstance(raw_args, dict) else {"_raw": str(raw_args)[:200]}
         result = self._run(name, raw_args, ctx)
+        perm = "denied" if result.error_code == "permission_denied" else ("allowed" if result.ok else "n/a")
         rec = ToolCallRecord(name=name, arguments=args_for_trace, ok=result.ok, error_code=result.error_code,
-                             latency_ms=round((time.perf_counter() - started) * 1000, 2))
+                             latency_ms=round((time.perf_counter() - started) * 1000, 2), permission=perm)
         return result, rec
 
     def _run(self, name: str, raw_args: Any, ctx: RequestContext) -> ToolResult:
         spec = self._tools.get(name)
         if spec is None:
             return ToolResult(False, error_code="unknown_tool", user_message="That action is not available.")
+        if self._guard is not None:
+            denial = self._guard(spec, ctx)
+            if denial is not None:
+                return denial
         if not isinstance(raw_args, dict):
             return ToolResult(False, error_code="invalid_arguments", user_message="The tool arguments were malformed.")
         try:
@@ -65,8 +75,12 @@ class ToolRegistry:
                               user_message=f"Some required details are missing or invalid: {fields}.")
         try:
             return spec.handler(ctx, args)
+        except AuthorizationError as e:           # structured denial from a service; the LLM cannot override it
+            return ToolResult(False, error_code="permission_denied", user_message=e.message)
         except RecordNotFound:
             return ToolResult(False, error_code="not_found", user_message="No matching record was found.")
         except Exception:  # never leak stack traces / internals to the model or user
+            if self._on_tool_error:
+                self._on_tool_error(name, ctx)
             return ToolResult(False, error_code="tool_error",
                               user_message="A system error occurred while running this action. Please try again later.")

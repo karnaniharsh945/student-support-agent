@@ -23,7 +23,17 @@ _SENSITIVE_KEYWORD = re.compile(
 )
 _CARD_NUMBER = re.compile(r"\b(?:\d[ -]?){13,19}\b")
 
-SENSITIVE_PATTERNS = [_SENSITIVE_KEYWORD, _CARD_NUMBER]
+# Milestone 2: broader secret detection (credential-shaped strings even without a keyword)
+_SECRET_SHAPES = re.compile(
+    r"\b(?:gsk_[A-Za-z0-9]{16,}|sk-[A-Za-z0-9_\-]{16,}|AKIA[0-9A-Z]{16}|ghp_[A-Za-z0-9]{20,}|"
+    r"eyJ[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,}\.[A-Za-z0-9_\-]{8,})\b")      # API keys, GitHub PAT, JWT
+_AADHAAR = re.compile(r"\b\d{4}\s\d{4}\s\d{4}\b")
+_PAN = re.compile(r"\b[A-Z]{5}\d{4}[A-Z]\b")
+_BEARER = re.compile(r"\bbearer\s+[A-Za-z0-9._\-]{12,}", re.IGNORECASE)
+_NATIONAL_ID_WORDS = re.compile(r"\b(aadhaar|aadhar|pan card|passport number|ssn)\b", re.IGNORECASE)
+
+SENSITIVE_PATTERNS = [_SENSITIVE_KEYWORD, _CARD_NUMBER, _SECRET_SHAPES, _AADHAAR, _PAN, _BEARER, _NATIONAL_ID_WORDS]
+_VALUE_PATTERNS = [_CARD_NUMBER, _SECRET_SHAPES, _AADHAAR, _PAN, _BEARER]
 
 
 def contains_sensitive(text: str) -> bool:
@@ -36,7 +46,8 @@ def redact(text: str) -> str:
     if not text:
         return text
     out = _KEYWORD_VALUE.sub(lambda m: f"{m.group(1)}{m.group(2)}{REDACTED}", text)
-    out = _CARD_NUMBER.sub(REDACTED, out)
+    for pat in _VALUE_PATTERNS:
+        out = pat.sub(REDACTED, out)
     return out
 
 

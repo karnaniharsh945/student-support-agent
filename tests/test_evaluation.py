@@ -12,9 +12,9 @@ def test_assignment1_suite_runs_and_scores(env):
     assert all(c["traces"] for c in report["cases"])
 
 
-def test_baseline_probe_documents_missing_isolation(env):
+def test_cross_student_probe_is_now_blocked(env):
     out = ev.a1_probe_cross_student(env)
-    assert out.extra["leaked"] is True     # Milestone 1 has no authorization - documented limitation
+    assert out.extra["leaked"] is False    # baseline (tag milestone-1-assignment-1) leaked; final code blocks it
 
 
 def test_report_writing(env, tmp_path):

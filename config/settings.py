@@ -26,6 +26,11 @@ class Settings:
     max_agent_steps: int = 4
     llm_timeout_s: float = 30.0
     agent_deadline_s: float = 90.0
+    bcrypt_rounds: int = 12               # lower only in tests/evaluation for speed
+    session_ttl_hours: float = 8.0
+    approval_ttl_hours: float = 72.0
+    max_failed_logins: int = 5
+    lockout_minutes: float = 5.0
     policy_path: Path = ROOT / "data" / "student_policy.md"
     seed_path: Path = ROOT / "data" / "sample_students.json"
 

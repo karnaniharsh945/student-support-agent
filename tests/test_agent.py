@@ -47,7 +47,7 @@ def test_invalid_model_tool_args_do_not_execute(env):
         LLMResponse("Could you describe the issue?")]))
     r = env.chat("S1001", "raise a ticket")
     assert r.tool_calls[0].error_code == "invalid_arguments" and r.outcome == "clarification"
-    assert env.svc.support.list_for_student("S1001") == []
+    assert env.svc.support.list_for_student(env.ctx("S1001")) == []
 
 
 def test_empty_model_response_handled(env):

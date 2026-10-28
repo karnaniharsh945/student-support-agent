@@ -47,3 +47,17 @@ def test_relevance_selection(env):
     keys = lambda q: {i.key for i in m.get_relevant("S1001", q)}
     assert keys("What is the late fee?") == {"preferred_language"}
     assert keys("Which programme am I in?") == {"preferred_language", "programme"}
+
+
+import pytest
+
+@pytest.mark.parametrize("msg", ["my password is abc12345 I prefer Hindi", "OTP 123456 and I prefer Hindi",
+                                 "key gsk_AbCdEf1234567890XyZab I prefer Hindi", "Bearer abcdef1234567890zzzz I prefer Hindi",
+                                 "card 4111 1111 1111 1111 I prefer Hindi", "my PAN is ABCDE1234F I prefer Hindi"])
+def test_credentials_block_all_memory_writes(env, msg):
+    r = env.svc.memory.remember_from_message("S1001", msg, "s")
+    assert r.stored == [] and env.svc.memory.list_items("S1001") == []
+
+
+def test_non_sensitive_still_remembered(env):
+    assert env.svc.memory.remember_from_message("S1001", "Please reply in Hindi", "s").stored == ["preferred_language"]

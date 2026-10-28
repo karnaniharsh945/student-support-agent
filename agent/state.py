@@ -7,9 +7,17 @@ from typing import Any
 
 @dataclass(frozen=True)
 class RequestContext:
-    """Who is making this request. Built by trusted server-side code, never by the LLM."""
+    """Who is making this request.
+
+    Built ONLY by AuthService from a validated server-side session (never from chat text, tool
+    arguments or frontend fields). `authenticated=False` contexts are refused by the agent.
+    """
     session_id: str
     student_id: str | None
+    user_id: int | None = None
+    username: str = ""
+    role: str = "anonymous"            # student | approver | admin | anonymous
+    authenticated: bool = False
 
 
 @dataclass
@@ -20,6 +28,7 @@ class ToolResult:
     error_code: str = ""
     user_message: str = ""
     evidence: list[dict[str, Any]] = field(default_factory=list)   # policy chunk metadata
+    approval_state: str = ""                                       # e.g. "PENDING" when a sensitive action was queued
 
     def to_model_payload(self) -> dict[str, Any]:
         if self.ok:
@@ -34,6 +43,7 @@ class ToolCallRecord:
     ok: bool
     error_code: str = ""
     latency_ms: float = 0.0
+    permission: str = "n/a"            # allowed | denied | n/a  (authorization outcome for this call)
 
 
 @dataclass

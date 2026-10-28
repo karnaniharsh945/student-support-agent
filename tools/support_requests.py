@@ -18,13 +18,11 @@ class SupportRequestInput(BaseModel):
 
 def make_tool(svc: Services) -> ToolSpec:
     def handler(ctx: RequestContext, args: SupportRequestInput) -> ToolResult:
-        if not ctx.student_id:
-            return ToolResult(False, error_code="missing_student", user_message="I need to know which student this is for.")
-        created = svc.support.create(ctx.student_id, args.category, args.description, args.priority)
+        created = svc.support.create(ctx, args.category, args.description, args.priority)
         return ToolResult(True, data=created)
 
     return ToolSpec(
-        name="create_support_request",
+        name="create_support_request", required_permission="support:create_own",
         description="Create a support ticket for the signed-in student. Only call when the student wants to raise a request "
                     "and has described the issue; ask them for the details first if the description is missing.",
         input_model=SupportRequestInput, handler=handler)

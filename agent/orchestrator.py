@@ -14,6 +14,7 @@ from typing import Any
 from agent.llm import LLMError, LLMProvider
 from agent.prompts import MEMORY_HEADER, SENSITIVE_NOTICE, SYSTEM_PROMPT
 from agent.state import AgentResponse, RequestContext, ToolCallRecord
+from services.authentication import AuthenticationError
 from agent.tool_registry import ToolRegistry
 from services.container import Services
 from services.privacy import contains_sensitive, redact
@@ -36,13 +37,26 @@ class AgentOrchestrator:
         self.svc, self.llm, self.registry = svc, llm, registry
 
     # ------------------------------------------------------------------ public
+    def handle_authenticated(self, session_token: str | None, message: str, history: list[dict] | None = None) -> AgentResponse:
+        """Entry point for the UI: identity is derived HERE from the server-side session, never from the caller."""
+        try:
+            ctx = self.svc.auth.context_from_token(session_token)
+        except AuthenticationError as e:
+            return AgentResponse(reply=e.message, run_id="", outcome="unauthenticated", error_category=e.reason)
+        return self.handle_message(ctx, message, history)
+
     def handle_message(self, ctx: RequestContext, message: str, history: list[dict] | None = None) -> AgentResponse:
-        tb = self.svc.tracer.start(ctx.session_id, ctx.student_id, message, self.llm.name, self.llm.model)
+        if not ctx.authenticated:
+            return AgentResponse(reply="Please sign in to use the Student Support Agent.", run_id="",
+                                 outcome="unauthenticated", error_category="not_authenticated")
+        tb = self.svc.tracer.start(ctx.session_id, ctx.student_id, message, self.llm.name, self.llm.model,
+                                   user_id=ctx.user_id, role=ctx.role)
         resp_kwargs: dict[str, Any] = {}
         try:
             reply, outcome, tool_recs, evidence, mem_refs, mem_events = self._run(ctx, message, history or [], tb)
         except LLMError as e:
             tb.error_category, tb.decision = e.category, "llm_error"
+            self.svc.audit.record("LLM_FAILURE", ctx=ctx, result="failure", error_category=e.category)
             reply, outcome, tool_recs, evidence, mem_refs, mem_events = FRIENDLY["llm_error"], "llm_error", [], [], [], []
         except Exception:
             tb.error_category, tb.decision = "internal_error", "internal_error"
@@ -68,6 +82,9 @@ class AgentOrchestrator:
                 mem_events.append("saved: " + ", ".join(wr.stored))
             if wr.blocked_reason:
                 mem_events.append(f"not stored ({wr.blocked_reason})")
+        if sensitive:
+            self.svc.audit.record("SENSITIVE_INPUT_NOT_STORED", ctx=ctx, result="not_stored",
+                                  detail={"reason": "credential-like content redacted; not persisted"})
 
         messages: list[dict[str, Any]] = [{"role": "system", "content": SYSTEM_PROMPT}]
         tb.context_sources.append("system_prompt")
@@ -116,6 +133,9 @@ class AgentOrchestrator:
                 total_calls += 1
                 result, rec = self.registry.execute(call.name, call.arguments, ctx)
                 tool_recs.append(rec)
+                tb.authorizations.append({"tool": rec.name, "permission": rec.permission})
+                if result.approval_state:
+                    tb.approval_state = result.approval_state
                 tb.tool_calls.append({"name": rec.name, "arguments": rec.arguments, "ok": rec.ok,
                                       "error_code": rec.error_code, "latency_ms": rec.latency_ms})
                 tb.context_sources.append(f"tool:{call.name}")

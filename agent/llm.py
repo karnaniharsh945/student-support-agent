@@ -119,6 +119,8 @@ _PERSONAL = re.compile(r"\b(my|mine|i owe|am i|did i|do i owe|status of)\b|\bsta
 _TICKET = re.compile(r"\b(raise|create|open|log|file|submit|lodge)\b.*\b(ticket|support request|request|complaint|issue)\b", re.I)
 _RECALL = re.compile(r"(which|what)\b.*\b(programme|program|language|contact|name)\b.*\b(i|my|me)\b|"
                      r"what did i (tell|say)|do you remember|how should you (contact|reach)", re.I)
+_COURSE_CHANGE = re.compile(r"\b(change|switch|move|transfer|swap)\b.*\b(course|elective|subject)\b", re.I)
+_APPROVE_ASK = re.compile(r"\b(approve|accept|execute|authori[sz]e)\b.*\b(request|change|apr-?\d+|it)\b", re.I)
 _GREET = re.compile(r"^\s*(hi|hello|hey|thanks|thank you|good (morning|afternoon|evening))\b", re.I)
 _OFFTOPIC = re.compile(r"\b(weather|cricket|movie|recipe|stock price|joke|football|lyrics)\b", re.I)
 
@@ -172,6 +174,18 @@ class MockProvider:
                 return ("Happy to raise a support request. Please describe the issue in a sentence or two "
                         "(what happened and what you need)."), []
             return None, self._ticket_call(user, desc)
+        if "request_course_change" in tool_names:
+            if "which course" in prev_assistant.lower() and not _GREET.search(user) and "?" not in user:
+                return None, self._call("request_course_change", new_course=user.strip(" .!")[:60])
+            if _APPROVE_ASK.search(user):
+                return ("I can't approve or execute requests. Course changes are decided by an authorised approver at the "
+                        "Academic Office, and nothing changes until then."), []
+            if _COURSE_CHANGE.search(user):
+                m = re.search(r"\b(?:(?:course|elective|subject)\s+to|(?:switch|move|transfer|swap)\s+to)\s+(?:the\s+)?(.{2,60}?)\s*(?:[.!?]|\bbecause\b|\bsince\b|$)", user, re.I)
+                if not m:
+                    return "Which course would you like to switch to? You can give the course code or the name.", []
+                why = re.search(r"\b(?:because|since)\s+(.{5,200})", user, re.I)
+                return None, self._call("request_course_change", new_course=m.group(1).strip(), reason=why.group(1).strip() if why else None)
         if _RECALL.search(user):
             return self._recall(user, mem), []
         if _FEE_WORDS.search(user) and _PERSONAL.search(user) and not _POLICY_MARKERS.search(user) and "get_fee_status" in tool_names:
@@ -230,6 +244,13 @@ class MockProvider:
         if name == "create_support_request":
             return (f"I've created support request {d['ticket']} (category {d['category']}, priority {d['priority']}, "
                     f"status {d['status']}). The Student Support Desk responds within 2 working days.")
+        if name == "request_course_change":
+            if d.get("duplicate"):
+                return (f"You already have a pending course-change request {d['display_id']} "
+                        f"({d['from_course']} -> {d['to_course']}). It is still waiting for approval; no change has been made.")
+            return (f"I've submitted course-change request {d['display_id']}: {d['from_course']} -> {d['to_course']} "
+                    f"({d['to_course_name']}). It has NOT been applied. It needs approval by the Academic Office "
+                    f"(status: {d['status']}, valid until {d['expires_at']}).")
         if name == "search_student_policy":
             if not d.get("sufficient"):
                 return ("The available policy document does not establish an answer to that, so I can't give a reliable one. "

@@ -41,6 +41,10 @@ class TraceBuilder:
         self.error_category = ""
         self.outcome = ""
         self.extra: dict[str, Any] = {}
+        self.user_id: int | None = None
+        self.role = ""
+        self.authorizations: list[dict[str, str]] = []
+        self.approval_state = ""
 
     def add_usage(self, in_tok: int | None, out_tok: int | None, latency_ms: float) -> None:
         self.llm_calls += 1
@@ -58,17 +62,22 @@ class TraceBuilder:
 
 
 class TraceService:
-    def __init__(self, db: Database):
+    def __init__(self, db: Database, authz=None):
         self.db = db
+        self.authz = authz
 
-    def start(self, session_id: str, student_id: str | None, question: str, provider: str, model: str) -> TraceBuilder:
-        return TraceBuilder(self, session_id, student_id, question, provider, model)
+    def start(self, session_id: str, student_id: str | None, question: str, provider: str, model: str,
+              user_id: int | None = None, role: str = "") -> TraceBuilder:
+        tb = TraceBuilder(self, session_id, student_id, question, provider, model)
+        tb.user_id, tb.role = user_id, role
+        return tb
 
     def _persist(self, t: TraceBuilder) -> None:
         with self.db.session() as s:
             s.add(Trace(
                 run_id=t.run_id, created_at=t.created_at, session_id=t.session_id, student_id=t.student_id,
-                question=t.question, category=t.category, decision=t.decision,
+                question=t.question, category=t.category, decision=t.decision, user_id=t.user_id, role=t.role,
+                authorization_json=json.dumps(t.authorizations), approval_state=t.approval_state,
                 tool_calls_json=json.dumps(redact_mapping(t.tool_calls)),
                 policy_chunks_json=json.dumps(t.policy_chunks), memory_refs_json=json.dumps(t.memory_refs),
                 context_sources_json=json.dumps(t.context_sources), latency_ms=t.latency_ms,
@@ -83,7 +92,9 @@ class TraceService:
             row = s.get(Trace, run_id)
             return self._to_dict(row) if row else None
 
-    def recent(self, limit: int = 50) -> list[dict]:
+    def recent(self, ctx, limit: int = 50) -> list[dict]:
+        """Permission-gated listing (approver/admin only)."""
+        self.authz.require_permission(ctx, "traces:read", action="list_traces", target_type="trace")
         with self.db.session() as s:
             rows = s.scalars(select(Trace).order_by(Trace.created_at.desc()).limit(limit)).all()
             return [self._to_dict(r) for r in rows]
@@ -97,4 +108,5 @@ class TraceService:
             "memory_refs": json.loads(r.memory_refs_json), "context_sources": json.loads(r.context_sources_json),
             "latency_ms": r.latency_ms, "model_latency_ms": r.model_latency_ms, "input_tokens": r.input_tokens,
             "output_tokens": r.output_tokens, "token_source": r.token_source, "llm_calls": r.llm_calls,
-            "provider": r.provider, "model": r.model, "error_category": r.error_category, "outcome": r.outcome}
+            "user_id": r.user_id, "role": r.role, "authorization": json.loads(r.authorization_json),
+            "approval_state": r.approval_state, "provider": r.provider, "model": r.model, "error_category": r.error_category, "outcome": r.outcome}

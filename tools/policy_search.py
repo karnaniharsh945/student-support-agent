@@ -28,7 +28,7 @@ def make_tool(svc: Services) -> ToolSpec:
                                       "note": "Answer only from these chunks and cite the chunk_id."}, evidence=evidence)
 
     return ToolSpec(
-        name="search_student_policy",
+        name="search_student_policy", required_permission="policy:read",
         description="Search the student policy handbook (fees, payment failures, late fees, scholarships, course changes, "
                     "support requests, escalation, privacy). Returns the relevant chunks only.",
         input_model=PolicySearchInput, handler=handler)
