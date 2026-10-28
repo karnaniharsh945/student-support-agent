@@ -5,7 +5,7 @@ executes it: approval happens in the approver UI via ApprovalService.decide(), w
 """
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from agent.state import RequestContext, ToolResult
 from agent.tool_registry import ToolSpec
@@ -14,6 +14,7 @@ from services.container import Services
 
 
 class CourseChangeInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")   # unknown/smuggled fields are rejected, not ignored
     new_course: str = Field(min_length=2, max_length=60, description="Course code (e.g. AIML501) or course name.")
     reason: str = Field(default="", max_length=300, description="Why the student wants the change (optional).")
 

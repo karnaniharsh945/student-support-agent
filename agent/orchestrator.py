@@ -8,6 +8,7 @@ Per request:
 from __future__ import annotations
 
 import json
+import re
 import time
 from typing import Any
 
@@ -20,6 +21,7 @@ from services.container import Services
 from services.privacy import contains_sensitive, redact
 
 MAX_TOOL_CALLS_PER_RUN = 4
+_CITATION = re.compile(r"policy-s\d+-c\d+")
 HISTORY_TURNS = 6          # messages (not pairs) kept as conversational context
 
 FRIENDLY = {
@@ -65,7 +67,7 @@ class AgentOrchestrator:
         return AgentResponse(reply=reply, run_id=tb.run_id, outcome=outcome, tool_calls=tool_recs, evidence=evidence,
                              memory_refs=mem_refs, memory_events=mem_events, latency_ms=latency,
                              input_tokens=tb.in_tokens, output_tokens=tb.out_tokens, error_category=tb.error_category,
-                             **resp_kwargs)
+                             guard_events=tb.extra.get("guards", []), **resp_kwargs)
 
     # ------------------------------------------------------------------ internals
     def _run(self, ctx, message, history, tb):
@@ -154,6 +156,12 @@ class AgentOrchestrator:
         if not final:
             tb.error_category = "empty_response"
             return FRIENDLY["empty_response"], "empty_response", tool_recs, evidence, mem_refs, mem_events
+        # citation guard: an answer may only cite policy chunks that were actually retrieved in THIS run
+        allowed = {e["chunk_id"] for e in evidence}
+        for cid in sorted(set(_CITATION.findall(final)) - allowed):
+            final = final.replace(cid, "[unverified citation removed]")
+            tb.context_sources.append("guard:citation_removed")
+            tb.extra.setdefault("guards", []).append(f"removed fabricated citation {cid}")
         outcome = "answered"
         if tool_recs and not tool_recs[-1].ok:
             tb.error_category = tool_recs[-1].error_code

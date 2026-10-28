@@ -1,6 +1,6 @@
 # Assignment 2 - Final Evaluation
 
-Generated 2026-10-28T07:26:45+00:00 - commit `6ff8405` - provider `mock` / `rule-based-mock-v1`
+Generated 2026-10-28T07:37:18+00:00 - commit `7d59c4e` - provider `mock` / `rule-based-mock-v1`
 
 > Provider is the deterministic rule-based MOCK, not a language model: tool-selection and accuracy figures measure the application logic (tools, retrieval, memory, guards), NOT LLM quality. Latency excludes network/LLM time.
 
@@ -9,7 +9,7 @@ Generated 2026-10-28T07:26:45+00:00 - commit `6ff8405` - provider `mock` / `rule
 - Task success: 11/11 = 100.0%
 - Task accuracy (ground-truth cases): 5/5 = 100.0%
 - Appropriate tool selection: 20/20 = 100.0%
-- Latency (ms, per turn): {"n": 13, "mean_ms": 4.38, "median_ms": 4.55, "p95_ms": 7.13, "max_ms": 7.27}
+- Latency (ms, per turn): {"n": 13, "mean_ms": 4.51, "median_ms": 5.2, "p95_ms": 6.58, "max_ms": 7.97}
 - Tokens: {"input_total": null, "output_total": null, "source": "unavailable (provider reported no usage; mock provider)"}
 
 ## Test cases
@@ -43,44 +43,44 @@ Generated 2026-10-28T07:26:45+00:00 - commit `6ff8405` - provider `mock` / `rule
 | A2-13 | Stale / expired / seat-exhausted approval handled safely | PASS | None | none | safe 3/3 (record changed -> STALE, expired -> EXPIRED, seat gone -> STALE); executed events=0 |
 | A2-14 | Failure during sensitive execution - rolled back, recorded as FAILED | PASS | None | none | status=FAILED; partial write rolled back (course=BDA502, seats=30); SUCCESS events=0, FAILED events=1 |
 | A2-15 | Ordinary support functionality still works after controls | PASS | get_fee_status | get_fee_status | fee, policy, ticket and cross-session memory all work for an authenticated student |
-| A2-16 | Authentication: bcrypt, lockout, forged/expired/revoked sessions | PASS | None | none | 8/8 auth checks passed (no enumeration, lockout, long password, forged token, logout revoke, session expiry, unauthenticated chat, bcrypt hashes); LOGIN_FAILED=9, LOGIN_SUCCESS=2; login latency=5.4 ms |
-| A2-17 | Audit trail: append-only, restricted, free of secrets | PASS | None | none | student audit access blocked=True; UPDATE rejected=True; DELETE rejected=True; no secrets/record contents in audit=True; all required fields present=True |
+| A2-16 | Authentication: bcrypt, lockout, forged/expired/revoked sessions | PASS | None | none | 8/8 auth checks passed (no enumeration, lockout, long password, forged token, logout revoke, session expiry, unauthenticated chat, bcrypt hashes); LOGIN_FAILED=9, LOGIN_SUCCESS=2; login latency=4.7 ms |
+| A2-17 | Audit trail: append-only, restricted, free of secrets | PASS | None | none | student audit access blocked=True; UPDATE rejected=True; DELETE rejected=True; no secrets/record contents in audit=True; all required fields present=True; hash chain intact=True (5 events); tampering with triggers removed detected=True |
 
 ## Trace table
 
 | Case | Turn | Decision / tools | Evidence (policy chunks) | Memory refs | Outcome | Latency ms | Tokens in/out |
 |---|---|---|---|---|---|---|---|
-| A1-01 | 1 | tool:search_student_policy | policy-s2-c1, policy-s1-c1 | - | answered | 3.58 | unavailable |
-| A1-02 | 1 | tool:get_fee_status | - | - | answered | 5.99 | unavailable |
-| A1-03 | 1 | tool:get_scholarship_status | - | - | answered | 6.08 | unavailable |
-| A1-04 | 1 | tool:create_support_request | - | - | answered | 7.27 | unavailable |
-| A1-05 | 1 | direct_answer | - | memory:programme | answered | 7.13 | unavailable |
-| A1-05 | 2 | direct_answer | - | memory:programme | answered | 1.52 | unavailable |
-| A1-06 | 1 | direct_answer | - | - | answered | 4.27 | unavailable |
-| A1-07 | 1 | tool:search_student_policy | - | - | answered | 2.11 | unavailable |
+| A1-01 | 1 | tool:search_student_policy | policy-s2-c1, policy-s1-c1 | - | answered | 3.48 | unavailable |
+| A1-02 | 1 | tool:get_fee_status | - | - | answered | 6.58 | unavailable |
+| A1-03 | 1 | tool:get_scholarship_status | - | - | answered | 7.97 | unavailable |
+| A1-04 | 1 | tool:create_support_request | - | - | answered | 5.64 | unavailable |
+| A1-05 | 1 | direct_answer | - | memory:programme | answered | 5.88 | unavailable |
+| A1-05 | 2 | direct_answer | - | memory:programme | answered | 1.54 | unavailable |
+| A1-06 | 1 | direct_answer | - | - | answered | 5.95 | unavailable |
+| A1-07 | 1 | tool:search_student_policy | - | - | answered | 2.05 | unavailable |
 | A1-08 | 1 | direct_answer | - | - | answered | 1.99 | unavailable |
-| A1-08 | 2 | tool:create_support_request | - | - | answered | 4.55 | unavailable |
-| A1-09 | 1 | tool:get_fee_status | - | - | tool_error | 5.03 | unavailable |
-| A1-10 | 1 | llm_error | - | - | llm_error | 5.37 | unavailable |
-| A1-11 | 1 | direct_answer | - | - | answered | 2.06 | unavailable |
-| INFO-01 | 1 | tool:get_scholarship_status | - | - | tool_error | 5.32 | unavailable |
-| A2-01 | 1 | tool:get_fee_status | - | - | answered | 6.6 | unavailable |
-| A2-02 | 1 | tool:get_scholarship_status | - | - | answered | 6.03 | unavailable |
-| A2-03 | 1 | tool:get_fee_status | - | - | tool_error | 5.09 | unavailable |
-| A2-03 | 2 | tool:get_fee_status | - | - | tool_error | 4.43 | unavailable |
-| A2-04 | 1 | tool:get_scholarship_status | - | - | tool_error | 5.16 | unavailable |
-| A2-05 | 1 | tool:get_fee_status | - | - | tool_error | 4.09 | unavailable |
-| A2-06 | 1 | tool:request_course_change | - | - | answered | 9.94 | unavailable |
-| A2-07 | 1 | tool:request_course_change | - | - | answered | 7.43 | unavailable |
-| A2-07 | 2 | tool:request_course_change | - | - | answered | 6.08 | unavailable |
-| A2-07 | 3 | direct_answer | - | - | answered | 1.87 | unavailable |
-| A2-11 | 1 | direct_answer | - | - | answered | 4.71 | unavailable |
-| A2-11 | 2 | direct_answer | - | - | answered | 4.03 | unavailable |
-| A2-11 | 3 | direct_answer | - | - | answered | 3.95 | unavailable |
-| A2-11 | 4 | direct_answer | - | - | answered | 4.1 | unavailable |
-| A2-11 | 5 | direct_answer | - | - | answered | 3.94 | unavailable |
-| A2-15 | 1 | tool:get_fee_status | - | - | answered | 6.94 | unavailable |
-| A2-15 | 2 | tool:search_student_policy | policy-s3-c1, policy-s2-c1 | - | answered | 1.75 | unavailable |
-| A2-15 | 3 | tool:create_support_request | - | - | answered | 4.44 | unavailable |
-| A2-15 | 4 | direct_answer | - | memory:programme | answered | 4.67 | unavailable |
-| A2-15 | 5 | direct_answer | - | memory:programme | answered | 1.53 | unavailable |
+| A1-08 | 2 | tool:create_support_request | - | - | answered | 5.42 | unavailable |
+| A1-09 | 1 | tool:get_fee_status | - | - | tool_error | 5.2 | unavailable |
+| A1-10 | 1 | llm_error | - | - | llm_error | 4.99 | unavailable |
+| A1-11 | 1 | direct_answer | - | - | answered | 1.9 | unavailable |
+| INFO-01 | 1 | tool:get_scholarship_status | - | - | tool_error | 5.09 | unavailable |
+| A2-01 | 1 | tool:get_fee_status | - | - | answered | 6.92 | unavailable |
+| A2-02 | 1 | tool:get_scholarship_status | - | - | answered | 5.89 | unavailable |
+| A2-03 | 1 | tool:get_fee_status | - | - | tool_error | 5.34 | unavailable |
+| A2-03 | 2 | tool:get_fee_status | - | - | tool_error | 7.34 | unavailable |
+| A2-04 | 1 | tool:get_scholarship_status | - | - | tool_error | 5.41 | unavailable |
+| A2-05 | 1 | tool:get_fee_status | - | - | tool_error | 4.46 | unavailable |
+| A2-06 | 1 | tool:request_course_change | - | - | answered | 8.99 | unavailable |
+| A2-07 | 1 | tool:request_course_change | - | - | answered | 7.61 | unavailable |
+| A2-07 | 2 | tool:request_course_change | - | - | answered | 5.64 | unavailable |
+| A2-07 | 3 | direct_answer | - | - | answered | 1.55 | unavailable |
+| A2-11 | 1 | direct_answer | - | - | answered | 5.2 | unavailable |
+| A2-11 | 2 | direct_answer | - | - | answered | 4.25 | unavailable |
+| A2-11 | 3 | direct_answer | - | - | answered | 4.35 | unavailable |
+| A2-11 | 4 | direct_answer | - | - | answered | 4.17 | unavailable |
+| A2-11 | 5 | direct_answer | - | - | answered | 4.09 | unavailable |
+| A2-15 | 1 | tool:get_fee_status | - | - | answered | 6.24 | unavailable |
+| A2-15 | 2 | tool:search_student_policy | policy-s3-c1, policy-s2-c1 | - | answered | 1.79 | unavailable |
+| A2-15 | 3 | tool:create_support_request | - | - | answered | 6.72 | unavailable |
+| A2-15 | 4 | direct_answer | - | memory:programme | answered | 4.82 | unavailable |
+| A2-15 | 5 | direct_answer | - | memory:programme | answered | 1.33 | unavailable |

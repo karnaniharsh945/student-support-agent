@@ -3,7 +3,7 @@ from __future__ import annotations
 
 from typing import Literal
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from agent.state import RequestContext, ToolResult
 from agent.tool_registry import ToolSpec
@@ -11,6 +11,7 @@ from services.container import Services
 
 
 class SupportRequestInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")   # unknown/smuggled fields are rejected, not ignored
     category: Literal["FEES", "SCHOLARSHIP", "COURSE_CHANGE", "TECHNICAL", "OTHER"]
     description: str = Field(min_length=10, max_length=500, description="What the student needs help with.")
     priority: Literal["LOW", "NORMAL", "HIGH"] = "NORMAL"

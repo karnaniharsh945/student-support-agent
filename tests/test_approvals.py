@@ -118,3 +118,16 @@ def test_concurrent_double_approval_executes_at_most_once(env):
 
 def test_llm_has_no_approval_tool(env):
     assert not [n for n in env.registry.names() if "approv" in n or "reject" in n or "execute" in n]
+
+
+def test_risk_advisor_is_deterministic_and_advisory(env):
+    appr = env.ctx("approver")
+    env.svc.approvals.request_course_change(env.ctx("S1001"), "AIML501", "")           # no reason
+    r = env.svc.approvals.list_pending(appr)[0]["risk"]
+    assert r["level"] == "MEDIUM" and "No reason" in r["factors"][0] and "Advisory only" in r["note"]
+    assert env.svc.approvals.list_pending(appr)[0]["risk"] == r                           # stable
+    # scarce seats + no reason -> HIGH; and the advisor never changes the status
+    env.svc.approvals.request_course_change(env.ctx("S1002"), "BDA502", "")
+    risks = {x["student_id"]: x["risk"]["level"] for x in env.svc.approvals.list_pending(appr)}
+    assert risks["S1002"] == "HIGH" and env.approval_status(1) == "PENDING"
+    assert "fee" not in str(env.svc.approvals.list_pending(appr)[0]["risk"]).lower()      # no private fee data used

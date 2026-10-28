@@ -55,6 +55,7 @@ class AgentResponse:
     evidence: list[dict[str, Any]] = field(default_factory=list)
     memory_refs: list[str] = field(default_factory=list)
     memory_events: list[str] = field(default_factory=list)
+    guard_events: list[str] = field(default_factory=list)      # e.g. fabricated citation removed
     latency_ms: float = 0.0
     input_tokens: int | None = None
     output_tokens: int | None = None

@@ -41,6 +41,8 @@ def main() -> None:
           table([{**e, "detail": e["detail"] or ""} for e in env.audit()],
                 ["timestamp", "actor", "actor_role", "action", "target_type", "target_id", "permission_decision",
                  "approval_request_id", "approval_decision", "approver_user_id", "execution_status", "result", "error_category"]), ""]
+    chain = env.svc.audit.verify_chain_system()
+    md += ["## Audit hash-chain verification", "", f"intact={chain['ok']}, events checked={chain['checked']}, head hash=`{chain['head_hash']}`", ""]
     (ROOT / "reports" / "sample_audit_trace.md").write_text("\n".join(md))
     env.close()
     print("written reports/sample_audit_trace.md")

@@ -6,27 +6,31 @@ Mock provider; tokens are `unavailable` because the mock reports no usage.
 
 | user | question | decision | authorization | approval_state | outcome | latency_ms | tokens |
 |---|---|---|---|---|---|---|---|
-| student:S1001 | What is my current fee status? | tool:get_fee_status | get_fee_status=allowed | - | answered | 7.46 | unavailable |
-| student:S1001 | What is the fee status for S1002? | tool:get_fee_status | get_fee_status=denied | - | tool_error | 5.49 | unavailable |
-| student:S1001 | I want to change my course to Machine Learning because I like it | tool:request_course_change | request_course_change=allowed | PENDING | answered | 9.37 | unavailable |
-| student:S1002 | I want to change my course to Business | tool:request_course_change | request_course_change=n/a | - | tool_error | 5.17 | unavailable |
-| student:S1001 | my OTP is [REDACTED] please remember it | direct_answer | - | - | answered | 4.19 | unavailable |
-| student:S1002 | change my course to DS503 | tool:request_course_change | request_course_change=n/a | - | tool_error | 5.56 | unavailable |
+| student:S1001 | What is my current fee status? | tool:get_fee_status | get_fee_status=allowed | - | answered | 7.98 | unavailable |
+| student:S1001 | What is the fee status for S1002? | tool:get_fee_status | get_fee_status=denied | - | tool_error | 4.44 | unavailable |
+| student:S1001 | I want to change my course to Machine Learning because I like it | tool:request_course_change | request_course_change=allowed | PENDING | answered | 7.83 | unavailable |
+| student:S1002 | I want to change my course to Business | tool:request_course_change | request_course_change=n/a | - | tool_error | 5.62 | unavailable |
+| student:S1001 | my OTP is [REDACTED] please remember it | direct_answer | - | - | answered | 4.12 | unavailable |
+| student:S1002 | change my course to DS503 | tool:request_course_change | request_course_change=n/a | - | tool_error | 5.11 | unavailable |
 
 ## Audit events (oldest first)
 
 | timestamp | actor | actor_role | action | target_type | target_id | permission_decision | approval_request_id | approval_decision | approver_user_id | execution_status | result | error_category |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|
-| 2026-10-28T07:27:23 | aarav | student | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
-| 2026-10-28T07:27:23 | aarav | student | FEE_STATUS_READ | fee_record | S1001 | ALLOWED | None |  | None |  | success |  |
-| 2026-10-28T07:27:23 | aarav | student | UNAUTHORIZED_ACCESS | fee_record | S1002 | DENIED | None |  | None |  | blocked | not_record_owner |
-| 2026-10-28T07:27:23 | aarav | student | COURSE_CHANGE_REQUESTED | student_record | S1001 | ALLOWED | 1 |  | None | NOT_EXECUTED | pending_approval |  |
-| 2026-10-28T07:27:23 | diya | student | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
-| 2026-10-28T07:27:23 | diya | student | COURSE_CHANGE_REQUEST_INVALID | student_record | S1002 | ALLOWED | None |  | None | NOT_EXECUTED | validation_failed | unknown_course |
-| 2026-10-28T07:27:23 | aarav | student | SENSITIVE_INPUT_NOT_STORED |  |  | N/A | None |  | None |  | not_stored |  |
-| 2026-10-28T07:27:23 | approver | approver | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
-| 2026-10-28T07:27:23 | approver | approver | APPROVAL_APPROVED | approval_request | 1 | ALLOWED | 1 | APPROVED | 4 | NOT_EXECUTED | approved |  |
-| 2026-10-28T07:27:23 | approver | approver | SENSITIVE_ACTION_EXECUTED | approval_request | 1 | ALLOWED | 1 | APPROVED | 4 | EXECUTED | success |  |
-| 2026-10-28T07:27:23 | diya | student | COURSE_CHANGE_REQUEST_INVALID | student_record | S1002 | ALLOWED | None |  | None | NOT_EXECUTED | validation_failed | course_full |
-| 2026-10-28T07:27:23 | diya | student | COURSE_CHANGE_REQUESTED | student_record | S1002 | ALLOWED | 2 |  | None | NOT_EXECUTED | pending_approval |  |
-| 2026-10-28T07:27:23 | approver | approver | APPROVAL_REJECTED | approval_request | 2 | ALLOWED | 2 | REJECTED | 4 | NOT_EXECUTED | rejected |  |
+| 2026-10-28T07:37:19 | aarav | student | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
+| 2026-10-28T07:37:19 | aarav | student | FEE_STATUS_READ | fee_record | S1001 | ALLOWED | None |  | None |  | success |  |
+| 2026-10-28T07:37:19 | aarav | student | UNAUTHORIZED_ACCESS | fee_record | S1002 | DENIED | None |  | None |  | blocked | not_record_owner |
+| 2026-10-28T07:37:19 | aarav | student | COURSE_CHANGE_REQUESTED | student_record | S1001 | ALLOWED | 1 |  | None | NOT_EXECUTED | pending_approval |  |
+| 2026-10-28T07:37:19 | diya | student | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
+| 2026-10-28T07:37:19 | diya | student | COURSE_CHANGE_REQUEST_INVALID | student_record | S1002 | ALLOWED | None |  | None | NOT_EXECUTED | validation_failed | unknown_course |
+| 2026-10-28T07:37:19 | aarav | student | SENSITIVE_INPUT_NOT_STORED |  |  | N/A | None |  | None |  | not_stored |  |
+| 2026-10-28T07:37:19 | approver | approver | LOGIN_SUCCESS |  |  | ALLOWED | None |  | None |  | success |  |
+| 2026-10-28T07:37:19 | approver | approver | APPROVAL_APPROVED | approval_request | 1 | ALLOWED | 1 | APPROVED | 4 | NOT_EXECUTED | approved |  |
+| 2026-10-28T07:37:19 | approver | approver | SENSITIVE_ACTION_EXECUTED | approval_request | 1 | ALLOWED | 1 | APPROVED | 4 | EXECUTED | success |  |
+| 2026-10-28T07:37:19 | diya | student | COURSE_CHANGE_REQUEST_INVALID | student_record | S1002 | ALLOWED | None |  | None | NOT_EXECUTED | validation_failed | course_full |
+| 2026-10-28T07:37:19 | diya | student | COURSE_CHANGE_REQUESTED | student_record | S1002 | ALLOWED | 2 |  | None | NOT_EXECUTED | pending_approval |  |
+| 2026-10-28T07:37:19 | approver | approver | APPROVAL_REJECTED | approval_request | 2 | ALLOWED | 2 | REJECTED | 4 | NOT_EXECUTED | rejected |  |
+
+## Audit hash-chain verification
+
+intact=True, events checked=13, head hash=`ff113f5c2575abd01acff4ffa34499e28c82bc7c15a8d6a4836d7dbbfd22aab2`

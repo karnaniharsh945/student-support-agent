@@ -35,6 +35,16 @@ verified by an executed test or evaluation case (not just by reading code).
 | 23 | Two-stage approval, requester != approver, no double execution, expiry/stale, transactional | B | `approvals.py` | eval A2-07..14, `test_approvals.py` (incl. concurrent race) |
 | 24 | Approver UI, audit/eval inspection UI, usable without LLM | B | `app.py` (quick lookups need no LLM) | `test_ui_smoke.py` |
 
+## Extra features beyond the assignment text (differentiators)
+| # | Feature | Implementation | Tests / evidence |
+|---|---|---|---|
+| E1 | Compromised-model red-team lab (15 scripted attacks via a hostile "LLM") | `services/redteam.py`, `scripts/run_redteam.py`, UI "Red-team lab" | `tests/test_redteam.py` (incl. 2 test-the-tests mutation checks); `reports/redteam_report.md` |
+| E2 | Tamper-evident audit hash chain + integrity verifier | `services/audit.py` (`verify_chain`), UI "Verify audit hash-chain integrity" | `test_audit.py` (edit and middle-delete detected even with triggers dropped); eval A2-17 |
+| E3 | Approver risk advisor (deterministic, advisory only, no private data) | `ApprovalService.assess_risk`, approver queue badge | `test_approvals.py::test_risk_advisor_*` |
+| E4 | Citation guard (fabricated policy citations stripped, traced) | `agent/orchestrator.py` | `test_agent.py::test_citation_guard_*` |
+| E5 | Strict tool schemas (`extra=forbid`) against smuggled fields | `tools/*.py` | red-team RT-03/RT-07, `test_unknown_tool_fields_are_rejected_not_ignored` |
+| E6 | LLM-free quick lookups; evaluation + red-team runnable from the UI | `app.py` | `test_ui_smoke.py` |
+
 ## Design decisions where the documents are silent
 * Sensitive action = course change (matches the brief's suggestion). Approver/admin are separate seeded accounts.
 * Mock provider for offline tests; mock results are labelled and never presented as LLM results.

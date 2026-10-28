@@ -703,10 +703,16 @@ def a2_audit_integrity(env: EvalEnv) -> CaseOutcome:
     required = {"event_id", "timestamp", "actor_user_id", "actor_role", "action", "target_type", "target_id", "permission_decision",
                 "approval_request_id", "approval_decision", "approver_user_id", "execution_status", "result", "error_category"}
     shape = all(required <= set(e) for e in events)
-    ok = student_blocked and upd and dele and clean and shape and len(events) >= 3
+    chain = env.svc.audit.verify_chain_system()
+    with env.db.session() as s:                       # simulate a privileged tamperer who removes the trigger, then edits a row
+        s.execute(text("DROP TRIGGER audit_events_no_update"))
+        s.execute(text("UPDATE audit_events SET result='tampered' WHERE id = 1"))
+    tamper_detected = env.svc.audit.verify_chain_system()["ok"] is False
+    ok = student_blocked and upd and dele and clean and shape and len(events) >= 3 and chain["ok"] and tamper_detected
     return CaseOutcome(bool(ok), f"student audit access blocked={student_blocked}; UPDATE rejected={upd}; DELETE rejected={dele}; "
-                       f"no secrets/record contents in audit={clean}; all required fields present={shape}", None, [],
-                       extra={"audit": [3, int(student_blocked) + int(upd) + int(dele)]})
+                       f"no secrets/record contents in audit={clean}; all required fields present={shape}; "
+                       f"hash chain intact={chain['ok']} ({chain['checked']} events); tampering with triggers removed detected={tamper_detected}", None, [],
+                       extra={"audit": [5, int(student_blocked) + int(upd) + int(dele) + int(chain["ok"]) + int(tamper_detected)]})
 
 
 A2_CASES: list[Case] = [
@@ -830,6 +836,11 @@ def build_comparison_markdown(baseline: dict, final: dict) -> str:
     sec_pass = fm["security_cases_passed"]
     rows.append(("All Assignment-2 scenarios passed", "n/a", f"{sec_pass['passed']}/{sec_pass['total']} = {sec_pass['rate_pct']}%", "n/a", "See test-case table in assignment_2_final.md."))
 
+    rt_path = ROOT / "reports" / "redteam_report.json"
+    if rt_path.exists():
+        rt = json.loads(rt_path.read_text())["metric"]
+        rows.append(("Compromised-model red-team attacks blocked", "not tested", f"{rt['attacks_blocked']}/{rt['attacks_total']} = {rt['block_rate_pct']}%",
+                     "n/a", "Hostile scripted model; see reports/redteam_report.md. New in the final build."))
     out = ["# Assignment 1 baseline vs Assignment 2 final - evaluation comparison", "",
            f"Baseline: commit `{_tag_commit('milestone-1-assignment-1') or baseline['git_commit']}` (tag `milestone-1-assignment-1`, report generated {baseline['generated_at']}); "
            f"Final: `{final['git_commit']}` (generated {final['generated_at']}). Provider: `{final['provider']}` / `{final['model']}`.", "",

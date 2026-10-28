@@ -1,7 +1,7 @@
 """Tool: search_student_policy."""
 from __future__ import annotations
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, ConfigDict, Field
 
 from agent.state import RequestContext, ToolResult
 from agent.tool_registry import ToolSpec
@@ -9,6 +9,7 @@ from services.container import Services
 
 
 class PolicySearchInput(BaseModel):
+    model_config = ConfigDict(extra="forbid")   # unknown/smuggled fields are rejected, not ignored
     query: str = Field(min_length=3, max_length=300, description="The policy question, in the student's own words.")
     top_k: int = Field(default=3, ge=1, le=5)
 

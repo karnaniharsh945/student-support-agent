@@ -278,7 +278,30 @@ class ApprovalService:
                 "expires_at": r.expires_at.isoformat(timespec="minutes"),
                 "decided_by": decider.username if decider else "", "decision_note": r.decision_note,
                 "executed_at": r.executed_at.isoformat(timespec="minutes") if r.executed_at else "",
-                "failure_category": r.failure_category}
+                "failure_category": r.failure_category, "risk": self.assess_risk(s, r, p)}
+
+    def assess_risk(self, s: Session, r: ApprovalRequest, payload: dict, now: datetime | None = None) -> dict:
+        """Deterministic, ADVISORY risk summary for the approver. It never approves or rejects anything itself.
+
+        Uses only non-private signals (no fee or scholarship data): reason given, seat scarcity, earlier decisions, time left.
+        """
+        now = now or self.clock()
+        factors: list[str] = []
+        to_c = s.get(Course, payload["to_course"])
+        if not (payload.get("reason") or "").strip():
+            factors.append("No reason was given by the student")
+        if to_c is not None and to_c.seats <= 3:
+            factors.append(f"Only {to_c.seats} seat(s) left in {payload['to_course']}")
+        prior = s.scalar(select(func.count()).select_from(ApprovalRequest).where(
+            ApprovalRequest.student_id == r.student_id, ApprovalRequest.action_type == r.action_type,
+            ApprovalRequest.id != r.id, ApprovalRequest.status.in_(("REJECTED", "STALE", "FAILED")))) or 0
+        if prior:
+            factors.append(f"{prior} earlier request(s) by this student were rejected, stale or failed")
+        if r.status == "PENDING" and r.expires_at - now <= timedelta(hours=12):
+            factors.append("Request expires within 12 hours")
+        level = "LOW" if not factors else ("MEDIUM" if len(factors) == 1 else "HIGH")
+        return {"level": level, "factors": factors or ["No risk factors detected"],
+                "note": "Advisory only - the decision is always made by a human approver."}
 
     @staticmethod
     def _resolve_course(s: Session, text: str) -> Course | None:

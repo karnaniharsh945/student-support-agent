@@ -6,7 +6,9 @@ allow-list of keys and redacted, so audit rows never contain credentials or priv
 """
 from __future__ import annotations
 
+import hashlib
 import json
+import threading
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Callable
@@ -22,6 +24,16 @@ from services.privacy import redact
 ALLOWED_DETAIL_KEYS = {"tool", "reason", "from_course", "to_course", "username", "permission", "status", "category",
                        "ticket", "session", "note", "requested_student", "outcome"}
 MAX_DETAIL_VALUE = 200
+GENESIS = "0" * 64
+
+
+def compute_event_hash(e: AuditEvent, prev_hash: str) -> str:
+    """SHA-256 over every audited field plus the previous event's hash (a hash chain)."""
+    body = json.dumps([e.event_id, e.timestamp.isoformat(), e.actor_user_id, e.actor_username, e.actor_role, e.action,
+                       e.target_type, e.target_id, e.permission_decision, e.approval_request_id, e.approval_decision,
+                       e.approver_user_id, e.execution_status, e.result, e.error_category, e.detail_json, prev_hash],
+                      separators=(",", ":"))
+    return hashlib.sha256(body.encode("utf-8")).hexdigest()
 
 
 def _naive_utc() -> datetime:
@@ -41,6 +53,7 @@ class AuditService:
         self.db = db
         self.clock = clock
         self.authz = None            # set by the container (permission check for list_events)
+        self._lock = threading.Lock()   # keeps the chain linear within one process (single-process demo)
 
     def record(self, action: str, *, ctx: RequestContext | None = None, actor_user_id: int | None = None,
                actor_username: str = "", actor_role: str = "", target_type: str = "", target_id: str = "",
@@ -56,11 +69,40 @@ class AuditService:
                         approval_request_id=approval_request_id, approval_decision=approval_decision,
                         approver_user_id=approver_user_id, execution_status=execution_status, result=result,
                         error_category=error_category, detail_json=json.dumps(clean_detail(detail)))
-        if session is not None:
-            session.add(ev)
-        else:
-            with self.db.session() as s:
-                s.add(ev)
+        with self._lock:
+            if session is not None:
+                self._append(session, ev)
+            else:
+                with self.db.session() as s:
+                    self._append(s, ev)
+
+    @staticmethod
+    def _append(s: Session, ev: AuditEvent) -> None:
+        s.flush()                                     # make earlier events of this transaction visible
+        prev = s.scalar(select(AuditEvent.event_hash).order_by(AuditEvent.id.desc()).limit(1)) or GENESIS
+        ev.prev_hash, ev.event_hash = prev, compute_event_hash(ev, prev)
+        s.add(ev)
+        s.flush()
+
+    # -- tamper evidence ---------------------------------------------------------------------
+    def verify_chain(self, ctx: RequestContext) -> dict:
+        """Permission-gated integrity check (approver/admin)."""
+        self.authz.require_permission(ctx, "audit:read", action="AUDIT_VERIFY", target_type="audit_events")
+        return self.verify_chain_system()
+
+    def verify_chain_system(self) -> dict:
+        """Re-compute every hash in order. Detects edited rows and deleted/inserted rows in the middle of the chain.
+
+        Limitation: deleting the NEWEST rows leaves a valid shorter chain; publish/anchor `head_hash` externally to detect that.
+        """
+        prev, n = GENESIS, 0
+        with self.db.session() as s:
+            for e in s.scalars(select(AuditEvent).order_by(AuditEvent.id)):
+                n += 1
+                if e.prev_hash != prev or e.event_hash != compute_event_hash(e, prev):
+                    return {"ok": False, "checked": n, "first_broken_event_id": e.event_id, "head_hash": prev}
+                prev = e.event_hash
+        return {"ok": True, "checked": n, "first_broken_event_id": None, "head_hash": prev}
 
     # -- read side (permission gated; students have no access) -----------------------------
     def list_events(self, ctx: RequestContext, *, action: str | None = None, approval_request_id: int | None = None,

@@ -122,3 +122,20 @@ def test_missing_configuration_is_explicit():
         build_provider(replace(base, model_provider="groq", groq_api_key="", model_name="m"))
     with pytest.raises(ConfigurationError):
         build_provider(replace(base, model_provider="groq", groq_api_key="k", model_name=""))
+
+
+def test_citation_guard_removes_fabricated_chunk_ids(env):
+    env.set_llm(ScriptedProvider([LLMResponse("Per policy-s9-c1 you may pay any time.")]))
+    r = env.chat("S1001", "can I pay late?")
+    assert "policy-s9-c1" not in r.reply and "unverified citation removed" in r.reply
+    assert r.guard_events and "guard:citation_removed" in env.svc.tracer.get(r.run_id)["context_sources"]
+
+
+def test_citation_guard_keeps_real_citations(env):
+    r = env.chat("S1001", "The payment portal failed. Can I pay on the next working day?")
+    assert "[policy-s2-c1]" in r.reply and not r.guard_events
+
+
+def test_unknown_tool_fields_are_rejected_not_ignored(env):
+    res, _ = env.registry.execute("get_fee_status", {"student_id": "S1001", "role": "admin"}, env.ctx("S1001"))
+    assert res.error_code == "invalid_arguments"

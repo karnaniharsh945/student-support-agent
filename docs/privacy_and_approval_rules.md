@@ -22,6 +22,16 @@ Outcomes that never execute: pending, rejected, expired, stale (record changed /
 type/id, permission decision, approval id/decision, approver, execution status, result, error category. Details are
 allow-listed and redacted; no passwords, OTPs, keys or fee amounts. Students cannot read it; approver/admin can.
 
+**Tamper evidence.** Every audit event stores `prev_hash` and `event_hash` (SHA-256 over all fields + the previous hash). Verification
+re-computes the chain: edited rows and deleted/inserted middle rows are detected even if someone drops the SQLite triggers. Deleting the
+newest rows is not detectable without externally anchoring the head hash (shown in the UI) - documented limitation.
+
+**Risk advisor.** Approvers see a LOW/MEDIUM/HIGH advisory based on non-private signals (no reason given, scarce seats, earlier rejected requests,
+imminent expiry). It never decides anything.
+
+**Compromised-model assumption.** The red-team lab replaces the LLM with a hostile scripted model; all attacks must still fail because every
+control is in backend code. Strict tool schemas reject smuggled fields, and the citation guard removes policy citations that were not retrieved.
+
 **Memory privacy.** Only 4 allow-listed non-sensitive keys can be stored; any message containing a credential-like pattern
 (password/OTP/PIN/token/API key/card/ID-number shapes) stores *nothing*, is redacted before reaching the LLM, the trace and the
 audit trail, and the user is reminded not to share secrets.

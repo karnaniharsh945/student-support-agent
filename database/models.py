@@ -185,3 +185,5 @@ class AuditEvent(Base):
     result: Mapped[str] = mapped_column(String(40), default="")
     error_category: Mapped[str] = mapped_column(String(40), default="")
     detail_json: Mapped[str] = mapped_column(Text, default="{}")                     # allow-listed, redacted keys only
+    prev_hash: Mapped[str] = mapped_column(String(64), default="")                   # tamper-evident chain (see AuditService)
+    event_hash: Mapped[str] = mapped_column(String(64), default="")

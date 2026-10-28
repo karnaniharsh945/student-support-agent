@@ -45,3 +45,13 @@ def test_approver_sees_queue(tmp_path, monkeypatch):
     monkeypatch.setenv("MODEL_PROVIDER", "mock")
     at = _login(AppTest.from_file(APP, default_timeout=60).run(), "approver", "Approver@2026")
     assert not at.exception and "Approval queue" in at.sidebar.radio[0].options
+
+
+def test_admin_sees_redteam_and_audit_pages(tmp_path, monkeypatch):
+    monkeypatch.setenv("DATABASE_URL", f"sqlite:///{tmp_path}/ui.db")
+    monkeypatch.setenv("MODEL_PROVIDER", "mock")
+    at = _login(AppTest.from_file(APP, default_timeout=60).run(), "admin", "Admin@2026")
+    assert "Red-team lab" in at.sidebar.radio[0].options
+    for page in ("Red-team lab", "Audit log", "Approval queue"):
+        at.sidebar.radio[0].set_value(page).run()
+        assert not at.exception, page

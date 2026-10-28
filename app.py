@@ -99,7 +99,7 @@ else:
     st.sidebar.success(f"Model: {llm.name} / {llm.model}")
 
 pages = (["Chat", "My requests", "My memory"] if ctx.role == "student"
-         else ["Approval queue", "Approval history", "Audit log", "Traces", "Evaluation", "Chat"])
+         else ["Approval queue", "Approval history", "Audit log", "Traces", "Evaluation", "Red-team lab", "Chat"])
 page = st.sidebar.radio("Section", pages)
 
 # ------------------------------------------------------------------ student pages
@@ -127,7 +127,7 @@ if page == "Chat":
             r = orch.handle_authenticated(token, prompt, [{"role": m["role"], "content": m["content"]} for m in msgs[:-1]])
             reply = r.reply
             meta = {"run_id": r.run_id, "outcome": r.outcome, "tools": [{"name": t.name, "ok": t.ok, "permission": t.permission} for t in r.tool_calls],
-                    "evidence": r.evidence, "memory": r.memory_refs, "memory_events": r.memory_events, "latency_ms": r.latency_ms,
+                    "evidence": r.evidence, "memory": r.memory_refs, "memory_events": r.memory_events, "latency_ms": r.latency_ms, "guards": r.guard_events,
                     "tokens_in": r.input_tokens, "tokens_out": r.output_tokens}
         msgs.append({"role": "assistant", "content": reply, "meta": meta})
         st.rerun()
@@ -170,6 +170,9 @@ elif page == "Approval queue":
             st.write(f"**Proposed change:** {r['from_course']} → {r['to_course']}")
             st.write(f"**Reason given:** {r['reason'] or '—'}")
             st.info(f"**Consequences:** {r['consequences']}")
+            risk = r["risk"]
+            badge = {"LOW": "🟢", "MEDIUM": "🟠", "HIGH": "🔴"}[risk["level"]]
+            st.write(f"**Risk advisor:** {badge} {risk['level']} — " + "; ".join(risk["factors"]) + f"  \n*{risk['note']}*")
             note = st.text_input("Decision note (optional)", key=f"note-{r['id']}")
             c1, c2 = st.columns(2)
             for col, label, decision in ((c1, "✅ Approve & execute", "APPROVE"), (c2, "⛔ Reject", "REJECT")):
@@ -189,6 +192,11 @@ elif page == "Approval history":
 
 elif page == "Audit log":
     st.header("Audit log (append-only)")
+    if st.button("🔗 Verify audit hash-chain integrity"):
+        v = svc.audit.verify_chain(ctx)
+        (st.success if v["ok"] else st.error)(
+            f"{'Chain intact' if v['ok'] else 'TAMPERING DETECTED at event ' + str(v['first_broken_event_id'])} — "
+            f"{v['checked']} events checked. Head hash: `{v['head_hash']}`")
     ev = svc.audit.list_events(ctx, limit=500)
     actions = sorted({e["action"] for e in ev})
     pick = st.multiselect("Filter by action", actions)
@@ -201,6 +209,29 @@ elif page == "Traces":
     table([{**{k: r[k] for k in ("created_at", "user_id", "role", "student_id", "question", "decision", "outcome", "latency_ms",
                                   "input_tokens", "output_tokens", "token_source", "approval_state", "provider", "error_category")},
             "authorization": ", ".join(f"{a['tool']}:{a['permission']}" for a in r["authorization"])} for r in rows], "No traces yet.")
+
+elif page == "Red-team lab":
+    st.header("Red-team lab — what if the LLM itself is compromised?")
+    st.caption("A scripted hostile model proposes attacks (cross-student reads, smuggled identity fields, injection strings, privileged tools, "
+               "floods, role abuse). Each runs through the real backend; the lab checks nothing leaked, nothing changed and the denial was audited.")
+    if not svc.authz.has_permission(ctx, "evaluation:read"):
+        st.error("Not permitted.")
+        st.stop()
+    from services import redteam
+    rt_file = ROOT / "reports" / "redteam_report.json"
+    if svc.authz.has_permission(ctx, "evaluation:run") and st.button("Run attack catalogue now (~10 s)"):
+        with st.spinner("Attacking…"):
+            redteam.write_redteam_report(redteam.run_redteam(svc.settings), rt_file)
+    if rt_file.exists():
+        rep = json.loads(rt_file.read_text())
+        m = rep["metric"]
+        st.metric("Attacks blocked", f"{m['attacks_blocked']}/{m['attacks_total']}", f"{m['block_rate_pct']}%")
+        st.caption(m["definition"])
+        table([{"id": a["id"], "category": a["category"], "attack": a["title"], "actor": a["actor"],
+                "result": "BLOCKED" if a["blocked"] else "NOT BLOCKED", "detail": a["detail"]} for a in rep["attacks"]], "none")
+        st.caption(rep["caveat"])
+    else:
+        st.info("No report yet. Run `python scripts/run_redteam.py` (or use the button as admin).")
 
 elif page == "Evaluation":
     st.header("Evaluation results")

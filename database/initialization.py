@@ -38,7 +38,8 @@ def check_schema(db: Database) -> None:
     """Fail loudly if an old (Milestone-1) database file is being reused."""
     insp = inspect(db.engine)
     cols = {c["name"] for c in insp.get_columns("traces")}
-    if "authorization_json" not in cols or "users" not in insp.get_table_names():
+    audit_cols = {c["name"] for c in insp.get_columns("audit_events")} if "audit_events" in insp.get_table_names() else set()
+    if "authorization_json" not in cols or "users" not in insp.get_table_names() or "event_hash" not in audit_cols:
         raise SchemaOutdated(SCHEMA_HINT)
 
 

@@ -16,4 +16,8 @@ Start: `streamlit run app.py` (mock provider is fine; the sidebar says so). Open
 | 10 | Audit evidence | Approver → **Audit log**, filter by `APPROVAL_APPROVED`, `SENSITIVE_ACTION_EXECUTED`, `APPROVAL_REJECTED`, `UNAUTHORIZED_ACCESS`, `LOGIN_FAILED` | Actor, role, target, permission decision, approval decision, approver, execution status, result — no secrets. Students cannot open this page (and the backend refuses even if they could). |
 | 11 | Metrics + comparison | **Evaluation** page (approver/admin) | Baseline vs final tables, definitions, latency, tokens (`unavailable` with mock), 17/17 scenarios. |
 
-Optional: log in as **aarav** and try a wrong password (see `LOGIN_FAILED` audit event); run `pytest -q` to show 96 passing tests.
+| 12 | Risk advisor | In the approval queue, read the 🟢/🟠/🔴 badge (e.g. request with no reason and few seats left ⇒ HIGH) | Factors listed; text says advisory only. |
+| 13 | Tamper-evident audit | Audit log → **Verify audit hash-chain integrity** | "Chain intact — N events checked" plus the head hash. (Tests show edits/deletions are detected.) |
+| 14 | Compromised-model red team | **Red-team lab** (admin: *Run attack catalogue now*) | 15/15 attacks blocked, each with the safe error code and audit evidence. |
+
+Optional: log in as **aarav** and try a wrong password (see `LOGIN_FAILED` audit event); run `pytest -q` to show all passing tests.
