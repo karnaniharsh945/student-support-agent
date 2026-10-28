@@ -153,7 +153,7 @@ reproduces the same metrics). `reports/assignment_2_final.{json,md}` and `report
 Metric definitions with denominators are in the generated reports. Headline (mock provider, small synthetic set):
 11/11 equivalent Assignment-1 cases still pass; 10/10 unauthorized-access attempts blocked (the baseline returned another
 student's record in its probe); 7/7 sensitive-action attempts held until approval; 2/2 rejection checks never executed;
-5/5 credential messages left no trace in memory/trace/audit; 17/17 Assignment-2 scenarios passed. Latency rose from about 3.0 to 4.3 ms
+5/5 credential messages left no trace in memory/trace/audit; 17/17 Assignment-2 scenarios passed. Latency rose from about 3.0 to 4.4 ms (varies by about 1 ms between runs)
 mean per turn (mock model, excludes LLM/network time). Tokens: unavailable with the mock provider.
 **Test-the-tests:** during development, deliberately disabling the ownership check or executing on request made the corresponding
 cases fail, and restoring the code made them pass again.
