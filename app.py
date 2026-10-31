@@ -17,8 +17,11 @@ from services.authentication import AuthenticationError
 from services.authorization import AuthorizationError
 from services.container import build_services
 from tools import build_registry
+from ui.theme import MASCOT_PATH, headline_facts, hero, inject_theme, kpis, sidebar_brand
+from ui.tour import render_tour
 
-st.set_page_config(page_title="Student Support Agent", page_icon="🎓", layout="wide")
+st.set_page_config(page_title="Student Support Agent", page_icon=str(MASCOT_PATH), layout="wide")
+inject_theme()
 
 
 @st.cache_resource
@@ -65,27 +68,42 @@ if token:
         st.warning(e.message)
 
 if ctx is None:
-    st.title("🎓 Student Support Agent")
-    st.caption("Sign in to continue. Synthetic demonstration data only.")
-    with st.form("login"):
-        u = st.text_input("Username")
-        p = st.text_input("Password", type="password")
-        go = st.form_submit_button("Sign in")
-    if go:
-        try:
-            st.session_state.token = svc.auth.login(u, p)
-            st.session_state.pop("messages", None)
+    if st.session_state.get("show_tour"):
+        if st.button("← Back to sign in"):
+            st.session_state.show_tour = False
             st.rerun()
-        except AuthenticationError as e:
-            st.error(e.message)
-    with st.expander("Demo accounts (local testing only)"):
-        st.markdown("| user | password | role |\n|---|---|---|\n| aarav | Aarav@2026 | student (S1001) |\n| diya | Diya@2026 | student (S1002) |\n"
-                    "| kabir | Kabir@2026 | student (S1003) |\n| approver | Approver@2026 | approver |\n| admin | Admin@2026 | admin |")
+        render_tour()
+        st.stop()
+    hero("Student Support Agent", "An AI agent that uses real tools, remembers safely, protects private data, and asks a human before it changes anything. "
+         "Synthetic demonstration data.", headline_facts())
+    left, right = st.columns([1, 1], gap="large")
+    with left:
+        st.markdown("#### What you can do")
+        st.markdown("- 💬 Ask about fees, scholarships and policies\n- 🔍 Get answers backed by cited policy chunks\n- 📝 Raise support requests\n"
+                    "- 🔁 Request a course change (a human approves it)\n- 🧠 Be remembered across sessions, without sharing secrets")
+        if st.button("🔊 Listen to the project tour"):
+            st.session_state.show_tour = True
+            st.rerun()
+    with right:
+        with st.form("login"):
+            st.markdown("#### Sign in")
+            u = st.text_input("Username")
+            p = st.text_input("Password", type="password")
+            go = st.form_submit_button("Sign in")
+        if go:
+            try:
+                st.session_state.token = svc.auth.login(u, p)
+                st.session_state.pop("messages", None)
+                st.rerun()
+            except AuthenticationError as e:
+                st.error(e.message)
+        with st.expander("Demo accounts (local testing only)"):
+            st.markdown("| user | password | role |\n|---|---|---|\n| aarav | Aarav@2026 | student (S1001) |\n| diya | Diya@2026 | student (S1002) |\n"
+                        "| kabir | Kabir@2026 | student (S1003) |\n| approver | Approver@2026 | approver |\n| admin | Admin@2026 | admin |")
     st.stop()
 
 # ------------------------------------------------------------------ sidebar
-st.sidebar.title("🎓 Student Support Agent")
-st.sidebar.success(f"**{ctx.username}** · role: **{ctx.role}**" + (f" · {ctx.student_id}" if ctx.student_id else ""))
+sidebar_brand(ctx.username, ctx.role, f" · {ctx.student_id}" if ctx.student_id else "")
 if st.sidebar.button("Log out"):
     svc.auth.logout(token)
     for k in ("token", "messages"):
@@ -98,12 +116,15 @@ elif not llm.is_live:
 else:
     st.sidebar.success(f"Model: {llm.name} / {llm.model}")
 
-pages = (["Chat", "My requests", "My memory"] if ctx.role == "student"
-         else ["Approval queue", "Approval history", "Audit log", "Traces", "Evaluation", "Red-team lab", "Chat"])
+pages = (["Chat", "My requests", "My memory", "Project tour"] if ctx.role == "student"
+         else ["Approval queue", "Approval history", "Audit log", "Traces", "Evaluation", "Red-team lab", "Chat", "Project tour"])
 page = st.sidebar.radio("Section", pages)
 
+if page == "Project tour":
+    render_tour()
+
 # ------------------------------------------------------------------ student pages
-if page == "Chat":
+elif page == "Chat":
     st.header("Chat")
     msgs = st.session_state.setdefault("messages", [])
     if ctx.role == "student":
@@ -112,13 +133,23 @@ if page == "Chat":
             if st.sidebar.button(label):
                 res, _ = registry.execute(tool, {}, ctx)
                 msgs.append({"role": "assistant", "content": f"**{label}** — " + (json.dumps(res.data) if res.ok else res.user_message)})
+    if not msgs:
+        st.markdown("##### Try asking")
+        ideas = (["What is my current fee status?", "The payment portal failed. Can I pay on the next working day?",
+                  "I want to change my course to Machine Learning", "My programme is PGDM (Big Data Analytics)."]
+                 if ctx.role == "student" else ["What is the late fee?", "How do escalations work?"])
+        cols = st.columns(2)
+        for i, idea in enumerate(ideas):
+            if cols[i % 2].button(idea, key=f"idea-{i}", use_container_width=True):
+                st.session_state.pending_prompt = idea
+                st.rerun()
     for m in msgs:
-        with st.chat_message(m["role"]):
+        with st.chat_message(m["role"], avatar=str(MASCOT_PATH) if m["role"] == "assistant" else "🎓"):
             st.markdown(m["content"])
             if m.get("meta"):
                 with st.expander("Trace · tools · evidence · authorization"):
                     st.json(m["meta"])
-    prompt = st.chat_input("Ask about fees, scholarships, policies, course changes, or raise a request…")
+    prompt = st.session_state.pop("pending_prompt", None) or st.chat_input("Ask about fees, scholarships, policies, course changes, or raise a request…")
     if prompt:
         msgs.append({"role": "user", "content": prompt})
         if orch is None:
@@ -161,10 +192,14 @@ elif page == "Approval queue":
     except AuthorizationError as e:
         st.error(e.message)
         st.stop()
+    everything = svc.approvals.list_all(ctx, 500)
+    kpis([("Pending now", str(len(pending))), ("Executed", str(sum(r["status"] == "EXECUTED" for r in everything))),
+          ("Rejected", str(sum(r["status"] == "REJECTED" for r in everything))),
+          ("Expired / stale / failed", str(sum(r["status"] in ("EXPIRED", "STALE", "FAILED") for r in everything)))])
     if not pending:
         st.info("No pending requests.")
     for r in pending:
-        with st.container(border=True):
+        with st.container(border=True, key=f"apr-{r['id']}"):
             st.subheader(f"{r['display_id']} · {r['action']} · {r['student_name']} ({r['student_id']})")
             st.write(f"**Requested by:** {r['requested_by']}  ·  **Created:** {r['created_at']}  ·  **Expires:** {r['expires_at']}")
             st.write(f"**Proposed change:** {r['from_course']} → {r['to_course']}")
@@ -225,7 +260,8 @@ elif page == "Red-team lab":
     if rt_file.exists():
         rep = json.loads(rt_file.read_text())
         m = rep["metric"]
-        st.metric("Attacks blocked", f"{m['attacks_blocked']}/{m['attacks_total']}", f"{m['block_rate_pct']}%")
+        kpis([("Attacks blocked", f"{m['attacks_blocked']}/{m['attacks_total']}"), ("Block rate", f"{m['block_rate_pct']}%"),
+              ("Categories", str(len(rep["by_category"])))])
         st.caption(m["definition"])
         table([{"id": a["id"], "category": a["category"], "attack": a["title"], "actor": a["actor"],
                 "result": "BLOCKED" if a["blocked"] else "NOT BLOCKED", "detail": a["detail"]} for a in rep["attacks"]], "none")

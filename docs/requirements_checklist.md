@@ -43,6 +43,8 @@ verified by an executed test or evaluation case (not just by reading code).
 | E3 | Approver risk advisor (deterministic, advisory only, no private data) | `ApprovalService.assess_risk`, approver queue badge | `test_approvals.py::test_risk_advisor_*` |
 | E4 | Citation guard (fabricated policy citations stripped, traced) | `agent/orchestrator.py` | `test_agent.py::test_citation_guard_*` |
 | E5 | Strict tool schemas (`extra=forbid`) against smuggled fields | `tools/*.py` | red-team RT-03/RT-07, `test_unknown_tool_fields_are_rejected_not_ignored` |
+| E7 | Animated cat-background UI, glass theme, mascot avatar | `ui/theme.py`, `assets/` | headless-browser screenshots (desktop + mobile); `test_ui_smoke.py` |
+| E8 | Text-to-speech project tour driven by `data/narration.md` (+ offline mp3) | `ui/tour.py`, `services/narration.py`, `scripts/generate_narration_audio.py` | `tests/test_narration.py`; tour page UI test |
 | E6 | LLM-free quick lookups; evaluation + red-team runnable from the UI | `app.py` | `test_ui_smoke.py` |
 
 ## Design decisions where the documents are silent

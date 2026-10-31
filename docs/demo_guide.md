@@ -1,5 +1,7 @@
 # Instructor demonstration guide (~10 minutes)
 
+Open with the **🔊 Listen to the project tour** button on the login screen (about 4½ minutes; use Next to skip chapters), then continue below.
+
 Start: `streamlit run app.py` (mock provider is fine; the sidebar says so). Open two browser profiles/windows or log out/in.
 
 | # | Scenario | Do | Expected |

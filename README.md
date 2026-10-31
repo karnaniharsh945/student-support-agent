@@ -27,6 +27,8 @@ Most student-agent projects stop at "LLM + tools + a prompt that says *don't lea
 | 📎 **Citation guard** | If the model cites a policy chunk it never retrieved, the citation is stripped and the event traced, so the agent can't fabricate evidence. | `agent/orchestrator.py` |
 | 🔒 **Strict tool schemas** | Unknown or smuggled tool arguments are rejected, not ignored. | `tools/*.py` |
 | 🧪 **Honest, reproducible evaluation** | Baseline numbers come from the code at git tag `milestone-1-assignment-1`; re-running that tag reproduces them. Every figure is computed from executed tests; mock results are labelled; unavailable token counts are never invented. | `services/evaluation.py`, `reports/` |
+| 🎨 **Animated cat-universe UI** | The cat image becomes a slowly zooming, blurred living background with drifting aurora light, a moving grid and floating particles; glass panels, a glowing rotating-ring mascot, chat bubbles that rise in, animated chips, hover effects, responsive layout, and `prefers-reduced-motion` support. Screenshot-tested in a real headless browser on desktop and mobile. | `ui/theme.py`, `assets/` |
+| 🔊 **Spoken project tour** | An in-app player reads `data/narration.md` aloud with text-to-speech: chapters, play/pause/stop, previous/next, voice and speed controls, live sentence highlighting. Available **before login** and for every role. A pre-rendered recording is included as an offline fallback. Edit the file and the tour changes everywhere. | `ui/tour.py`, `data/narration.md`, `services/narration.py` |
 | 🔌 **Works without the LLM** | Quick lookups call the same authorized tools with no model at all, so students keep service if the API is down. | UI sidebar |
 
 ---
@@ -118,6 +120,27 @@ expected safe code, required audit events exist and the audit hash chain remaine
 and `MockProvider` (deterministic rule-based stand-in for offline tests — **not an LLM**, always labelled as such). A missing key gives a clear configuration error;
 fake responses are never passed off as a live model.
 
+### 2.17 Animated UI (`ui/theme.py`, `.streamlit/config.toml`)
+Dark glassmorphism theme layered over the animated background you supplied (`assets/cat_bg.jpg`, a processed copy of the cat image; the circular mascot
+`assets/cat_mascot.png` is the assistant's chat avatar, the sidebar logo and the login hero). Layers, back to front: slow Ken-Burns zoom/pan of the cat,
+three drifting colour blobs, a moving perspective grid, 28 floating particles, a vignette. Buttons, chips and messages have motion and hover states; users who
+prefer reduced motion get a still version. The login page, chat suggestions ("Try asking"), KPI tiles on staff pages, the risk badge and the audit-verification
+banner are all styled. The theme is presentation only and contains no business logic.
+
+### 2.18 Spoken project tour (`ui/tour.py`, `data/narration.md`)
+The tour text lives in **`data/narration.md`** (eleven chapters, about 700 words, ~4½ minutes): welcome, the agent loop, tools, honest policy answers, memory,
+identity and privacy, human approval, the verifiable audit trail, the red-team lab, honest evaluation, and what makes the project different.
+* **How it speaks.** The server reads the file and passes it to a player that uses the browser's built-in text-to-speech (Web Speech API): pick a voice (neural/"natural"
+  voices are ranked first), change speed, jump between chapters, and watch the current sentence highlight. No data leaves your machine.
+* **Offline recording.** `assets/tour.mp3` was rendered from the same file with the local **espeak-ng** engine (a classic formant synthesiser, so it sounds robotic;
+  it is included so the tour works even where the browser has no voices). Re-render or upgrade it with
+  `python scripts/generate_narration_audio.py --engine espeak|pyttsx3|gtts` (`gtts` is online and the most natural-sounding).
+* **Accuracy guard.** A test checks the script mentions every headline feature, is plain speakable text (no markup or digits), and that its "fifteen attacks"
+  claim matches the real red-team catalogue, so the narration cannot silently drift from the project.
+* **Honest note.** The speech engines are text-to-speech systems, not neural voice models bundled with the project; the sandbox that built this could not
+  download neural TTS models, and the browser player could not be *heard* there (the headless browser has no voices) – its controls, chapter navigation and highlighting
+  were exercised, and the audio file was produced and measured (about 275 seconds).
+
 ---
 
 ## 3. Quick start
@@ -129,7 +152,7 @@ cp .env.example .env                                       # default MODEL_PROVI
 python scripts/initialize_database.py --reset              # create DB + seed (safe to re-run without --reset)
 streamlit run app.py                                       # open http://localhost:8501
 
-pytest -q                                                  # 107 tests, no network or API key needed
+pytest -q                                                  # 114 tests, no network or API key needed
 python scripts/run_evaluation.py --assignment 2            # final evaluation + comparison with the baseline
 python scripts/run_redteam.py                              # compromised-model red-team lab
 python scripts/generate_samples.py                         # sample trace + audit records
@@ -153,11 +176,13 @@ Configuration keys are listed in `.env.example`.
 
 ## 4. Using the app by role
 
+**Everyone** — the *Project tour* page (also reachable from the login screen) plays the spoken tour.
+
 **Student** — *Chat* (policy questions, own fee/scholarship, tickets, course-change requests, preferences), *My requests* (tickets and approval status),
-*My memory* (inspect/forget), sidebar *Quick lookups* (no LLM needed). Each answer has an expander with tools, authorization decision, evidence, memory and latency.
+*My memory* (inspect/forget), *Project tour*, sidebar *Quick lookups* (no LLM needed). Each answer has an expander with tools, authorization decision, evidence, memory and latency.
 
 **Approver / Admin** — *Approval queue* (requester, proposed change, consequences, risk advisor, notes, approve/reject, audit events for the request),
-*Approval history*, *Audit log* (filter + hash-chain verification), *Traces*, *Evaluation* (baseline, final, comparison), *Red-team lab*.
+*Approval history*, *Audit log* (filter + hash-chain verification), *Traces*, *Evaluation* (baseline, final, comparison), *Red-team lab*, *Project tour*.
 Hiding pages is only a convenience: the backend re-checks permissions on every call.
 
 Instructor walkthrough: [`docs/demo_guide.md`](docs/demo_guide.md).
@@ -270,21 +295,23 @@ Foreign keys are enforced; state changes use transactions. An outdated database 
 ## 7. Project structure
 ```
 app.py                      Streamlit UI (presentation only)
+ui/                         theme.py (animated background, glass theme) · tour.py (text-to-speech tour player)
+assets/                     cat_bg.jpg · cat_mascot.png · tour.mp3 (pre-rendered narration)
 config/settings.py          environment-based configuration
 agent/                      orchestrator.py · llm.py (providers) · tool_registry.py · prompts.py · state.py
 tools/                      fees · scholarships · support_requests · policy_search · sensitive_actions
 services/                   authentication · authorization · approvals · audit · memory · privacy · policy_retrieval
                             records · tracing · evaluation · redteam · container
 database/                   models · connection · initialization
-data/                       student_policy.md (synthetic) · sample_students.json (synthetic + demo accounts)
-tests/                      107 tests (unit, integration, end-to-end, security, UI smoke, red-team)
+data/                       student_policy.md · sample_students.json (synthetic) · narration.md (spoken tour script)
+tests/                      114 tests (unit, integration, end-to-end, security, UI smoke, red-team)
 scripts/                    initialize_database · run_evaluation · run_redteam · generate_samples
 reports/                    baseline, final, comparison, red-team, sample trace/audit
 docs/                       requirements_checklist · privacy_and_approval_rules · demo_guide · architecture_milestone1
 ```
 
 ## 8. Testing
-`pytest -q` → **107 passed** (offline, isolated temp databases, deterministic). Covers: tools and argument validation, retrieval relevance/insufficiency,
+`pytest -q` → **114 passed** (offline, isolated temp databases, deterministic). Covers: tools and argument validation, retrieval relevance/insufficiency,
 memory CRUD/persistence/relevance/credential blocking, agent loop bounds, minimal context, citation guard, LLM provider HTTP handling (mocked transport), authentication
 (hashing, lockout, expiry, forged tokens), authorization (service-level, no LLM), approvals (approve/reject/duplicate/expired/stale/failed/concurrent/self-approval),
 audit (fields, append-only, hash chain, secrets), red-team (including mutation checks), headless Streamlit UI flows for student, approver and admin.
